@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.active {
+    color: black;
+}
+
+@media (max-width: 768px) {
+    .dropdown-menu {
+      display: none;
+    }
+  }
+  @media (min-width: 768px) {
+    .dropdown-menu {
+      display: block;
+    }
+  }
+
+  .login-page {
+    background-image: url('./img/pic2.jpg');
+    background-size: cover;
+    background-position: center;
+    width: auto;
+    height:flex;
+    
+  }
+
+  .p2f-img {
+    background-image: url('./img/P2F_Logo.webp');
+    background-size: cover;
+    background-position: center;
+    width: auto;
+    height:flex;
+    
+  }
+
+  .dashboard-img {
+    background-image: url('./img/dashboard.png');
+    background-size: 30px;
+    width: 30px;
+    height:30px;
+    
+  }
+  .calendarIcon-img {
+    background-image: url('./img/calendar-icon.png');
+    background-size: 30px;
+    width: 30px;
+    height:30px;
+    
+  }
+
+  .anima-page {
+    background-image: url('./img/animate.gif');
+    background-size: cover;
+    background-position: cover;
+    width: 300px;
+    height:450px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .kalendar-page {
+    background-image: url('./img/kalender.gif');
+    background-size: cover;
+    background-position: cover;
+    width: 30px;
+    height:40px;
+    position: relative;
+    display: inline-block;
+  }
+
+
+  .clock {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+
+  .video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  
+
+
+
+  
+
+  .date-time {
+    font-family: "Times New Roman" serif;
+    font-size:30px;
+    color: #e41313;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    
+    
+  }
+  
+  .clock-face {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 0 0 2px rgba(0,0,0,0.1),
+      0 0 10px rgba(0,0,0,0.2),
+      0 0 50px rgba(0,0,0,0.2),
+      0 0 100px rgba(0,0,0,0.2);
+  }
+  
+  .hour-hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    width: 6px;
+    height: 50px;
+    border-radius: 4px;
+    background: #333;
+    transform-origin: bottom center;
+  }
+  
+  .minute-hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    width: 4px;
+    height: 70px;
+    border-radius: 4px;
+    background: #555;
+    transform-origin: bottom center;
+  }
+  
+  .second-hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    width: 2px;
+    height: 70px;
+    border-radius: 4px;
+    background: #555;
+    transform-origin: bottom center;
+  }
+  
+  /* .clock-animation {
+    display: inline-block;
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.datetime-symbol {
+  margin-right: 5px;
+  font-size: 1.2em;
+} */
+.datetime-container {
+  display: inline-block;
+  position: relative;
+  perspective: 1000px;
+}
+
+.datetime-container .paper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  transform-origin: left;
+  animation: flip 2s linear infinite;
+}
+
+@keyframes flip {
+  0% {
+      transform: rotateY(0deg);
+  }
+  50% {
+      transform: rotateY(-180deg);
+  }
+  100% {
+      transform: rotateY(0deg);
+  }
+}
+
+.clock-animation {
+  display: inline-block;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+
+/* this is table row alignment */
+.table-container {
+  overflow-x: fixed;
+}
+
+@media only screen and (max-width: 768px) {
+  .table-container table {
+      width: 60%;
+  }
+
+  .table-container td {
+      display: block;
+      text-align: center;
+  }
+
+
+}
+
+
+/* login form style */
+
+.blur-container {
+  position: relative;
+  backdrop-filter: blur(3px);
+  background-color: rgba(255, 255, 255, 0.5); /* Adjust the opacity as needed */
+  padding: 30px;
+  border-radius: 30px;
+}
+
+
+
+  .event-yellow {
+    background-color: hsla(67, 73%, 70%, 0.959);
+  }
+
+  .event-green {
+    background-color: rgb(186, 8, 174);
+  }
+
+  .event-gray {
+    background-color: rgb(241, 128, 128);
+  }
+
+
+
+
+/* font style */
+
+.text-black {
+  color: rgba(28, 230, 230, 0.792);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-3xl {
+  font-size: 3rem;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.tracking-wider {
+  letter-spacing: 0.1em;
+}
+ 
+/* logout button style */
+.bg-light-blue {
+  background-color: lightblue;
+}
+
+.hover\:bg-red:hover {
+  background-color: rgb(9, 143, 201);
+}
+
+/* logout  button */
+@media (max-width: 768px) {
+  .my-1 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .md\:mx-1,
+  .md\:my-0 {
+    margin: 0.5rem;
+  }
+}
+
+
