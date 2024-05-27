@@ -775,20 +775,20 @@ export default function (props) {
                 return info.event.extendedProps.colorClass;
               }}
               
-              eventClick={(info) => {
-                console.log("Event clicked:", info.event);
-                console.log("Event title:", info.event.title);
-                console.log("Event start:", info.event.start);
-                console.log("Event end:", info.event.end);
-                console.log("Extended props:", info.event.extendedProps.EndTime);
-                console.log("endtime", info.event.EndTime);
-                console.log("totalEvents", info.event);
-                handleOpenModal(info.event);
-                handleclickupdate(info.event)
-                // handleclickupdate(info.event.extendedProps.User._id)
+              // eventClick={(info) => {
+              //   console.log("Event clicked:", info.event);
+              //   console.log("Event title:", info.event.title);
+              //   console.log("Event start:", info.event.start);
+              //   console.log("Event end:", info.event.end);
+              //   console.log("Extended props:", info.event.extendedProps.EndTime);
+              //   console.log("endtime", info.event.EndTime);
+              //   console.log("totalEvents", info.event);
+              //   handleOpenModal(info.event);
+              //   handleclickupdate(info.event)
+              //   // handleclickupdate(info.event.extendedProps.User._id)
 
-                // console.log(info.event.extendedProps.User._id, "Event_id")
-              }}
+              //   // console.log(info.event.extendedProps.User._id, "Event_id")
+              // }}
             />
           </div>
         </section>
