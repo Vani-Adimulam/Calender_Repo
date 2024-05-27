@@ -13,29 +13,36 @@ function Register() {
   const [userName, setUserName] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false); // add state for password visibility
   const [isSuperUser, setIsSuperUser] = useState(false); // add state for super user
+  const [loading, setLoading] = useState(false); // add state for loading
   const navigate = useNavigate();
 
   function handleSubmit(event) {
     event.preventDefault();
-    // Perform client-side validation 
+    setLoading(true); // set loading state to true
+
+    // Perform client-side validation
     if (userName.trim() === "") {
       toast.error("Please enter your username");
+      setLoading(false); // set loading state to false
       return;
     }
 
     if (email.trim() === "") {
       toast.error("Please enter your email");
+      setLoading(false); // set loading state to false
       return;
     }
 
     if (password.trim() === "") {
       toast.error("Please enter your password");
+      setLoading(false); // set loading state to false
       return;
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       toast.error("Please enter a valid email address");
+      setLoading(false); // set loading state to false
       return;
     }
 
@@ -67,9 +74,14 @@ function Register() {
         if (err.response && err.response.data && err.response.data.message) {
           toast.error(err.response.data.message);
         } else {
-          toast.error("An error occurred during registration");
+          toast.error(
+            "An error occurred during registration. Please check the details and try again."
+          );
         }
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false); // set loading state to false
       });
   }
 
@@ -90,10 +102,13 @@ function Register() {
       </div>
       <div className="w-screen h-[90vh] flex justify-center items-center login-page">
         <div className="blur-container">
-          <form onSubmit={(e) => handleSubmit(e)} className="d-flex-col w-[100%] space-y-4 align-item-center">
+          <form
+            onSubmit={handleSubmit}
+            className="d-flex-col w-[100%] space-y-4 align-item-center"
+          >
             <h1 className="text-center text-xl">REGISTER</h1>
             <div className="d-flex justify-content-between">
-              <label className="text-xl">𝐔𝐬𝐞𝐫𝐍𝐚𝐦𝐞</label>
+              <label className="text-xl pr-3">𝐔𝐬𝐞𝐫𝐍𝐚𝐦𝐞</label>
               <input
                 onChange={(e) => setUserName(e.target.value)}
                 type="text"
@@ -146,8 +161,38 @@ function Register() {
               />
             </div> */}
             <div className="w-[100%]" style={{ textAlign: "center" }}>
-              <button type="submit" className="bg-blue-300 rounded-lg">
-                Submit
+              <button
+                type="submit"
+                className="bg-blue-300 rounded-lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      ></path>
+                    </svg>
+                    <span>Registering ...</span>
+                  </div>
+                ) : (
+                  "Submit"
+                )}
               </button>
             </div>
             <div className="text-center">

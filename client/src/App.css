@@ -245,15 +245,15 @@
 
 
   .event-yellow {
-    background-color: hsla(67, 73%, 70%, 0.959);
+    background-color: lightblue;
   }
 
   .event-green {
-    background-color: rgb(186, 8, 174);
+    background-color: lightgreen;
   }
 
   .event-gray {
-    background-color: rgb(241, 128, 128);
+    background-color: lightgreen;
   }
 
 
@@ -304,3 +304,6 @@
 }
 
 
+.btn-rounded {
+  border-radius: 8px;
+}

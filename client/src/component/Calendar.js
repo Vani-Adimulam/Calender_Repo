@@ -1,88 +1,104 @@
-import React, { useRef, useState, useEffect } from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPligin from '@fullcalendar/timegrid';
+import React, { useRef, useState, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPligin from "@fullcalendar/timegrid";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
-import Datetime from 'react-datetime';
-import Popup from 'reactjs-popup';
-import { Button, Form, Modal } from 'react-bootstrap';
-import axios from 'axios';
-import *as bootstrap from "bootstrap";
+import Datetime from "react-datetime";
+import Popup from "reactjs-popup";
+import { Button, Form, Modal } from "react-bootstrap";
+import axios from "axios";
+import * as bootstrap from "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'react-datetime/css/react-datetime.css';
-import NavbarCalendar from '../pages/NavbarCalendar';
-import moment from 'moment-timezone';
+import "react-datetime/css/react-datetime.css";
+import NavbarCalendar from "../pages/NavbarCalendar";
+import moment from "moment-timezone";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Backendapi from '../Backendapi';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "../App.css"
-
-
-
-
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Backendapi from "../Backendapi";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../App.css";
 
 export default function (props) {
   // localStorage.getItem("email").split("@")[0]
-  const [username, setuserName] = useState(JSON.parse(localStorage.getItem("username")));
-  console.log(username)
-  const [Emailusername, setEmailusername] = useState(localStorage.getItem("email"));
-  console.log(Emailusername)
+  const [username, setuserName] = useState(
+    JSON.parse(localStorage.getItem("username"))
+  );
+  // console.log(username)
+  const [Emailusername, setEmailusername] = useState(
+    localStorage.getItem("email")
+  );
+  // console.log(Emailusername)
   const [title, setTitle] = useState("");
   const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(new Date());
   const [EndTime, setEndTime] = useState(new Date());
   const [availability, setAvailability] = useState(true);
-  const [loginusername, setLoginUsername] = useState("")
-  const [Hours, setHours, getHours] = useState(new Date())
+  const [loginusername, setLoginUsername] = useState("");
+  const [Hours, setHours, getHours] = useState(new Date());
   const navigate = useNavigate();
   const [showEndTime, setShowEndTime] = useState(false);
-  const [endTimeManual, setEndTimeManual] = useState('');
+  const [endTimeManual, setEndTimeManual] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [displayEndTime, setDisplayEndTime] = useState(null)
-  const [meetingTime, setMeetingTime] = useState({ startTime: null, endTime: null });
+  const [displayEndTime, setDisplayEndTime] = useState(null);
+  const [meetingTime, setMeetingTime] = useState({
+    startTime: null,
+    endTime: null,
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-
-  const objectId = localStorage.getItem('objectId');
-  const userid = objectId.replace(/^"(.*)"$/, '$1');
+  const objectId = localStorage.getItem("objectId");
+  const userid = objectId.replace(/^"(.*)"$/, "$1");
   const [User, setUser] = useState(userid);
-  const [eventid, setEventid] = useState()
+  const [eventid, setEventid] = useState();
 
   const [Data, setData] = useState([]); // store the post data
   const [eventData, setEventData] = useState([]); // store the Display data
   const [RowData, setRowData] = useState([]);
   const [ViewShow, setViewShow] = useState(false);
-  const handleViewShow = () => { setViewShow(true) }
-  const handleViewClose = () => { setViewShow(false) }
-
+  const handleViewShow = () => {
+    setViewShow(true);
+  };
+  const handleViewClose = () => {
+    setViewShow(false);
+  };
 
   // For Edit Modal*****
   const [ViewEdit, setEditShow] = useState(false);
-  const handleEditShow = () => { setEditShow(true) }
-  const handleEditClose = () => { setEditShow(false) }
+  const handleEditShow = () => {
+    setEditShow(true);
+  };
+  const handleEditClose = () => {
+    setEditShow(false);
+  };
 
   // For delete Modal*****
   const [ViewDelete, setDeleteShow] = useState(false);
-  const handleDeletShow = () => { setDeleteShow(true) }
-  const handleDeleteClose = () => { setDeleteShow(false) }
+  const handleDeletShow = () => {
+    setDeleteShow(true);
+  };
+  const handleDeleteClose = () => {
+    setDeleteShow(false);
+  };
 
   // For Add new data Modal*****
   const [ViewPost, setPostShow] = useState(false);
-  const handlePostShow = () => { setPostShow(true) }
-  const handlePostClose = () => { setPostShow(false) }
+  const handlePostShow = () => {
+    setPostShow(true);
+  };
+  const handlePostClose = () => {
+    setPostShow(false);
+  };
 
   const [Delete, setDelete] = useState(false);
   //id for update record and delete
   const [id, setId] = useState("");
 
   //state variables to track the filter value and pagination
-  const [filterTitle, setFilterTitle] = useState('');
+  const [filterTitle, setFilterTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
 
   // Backendapi.REACT_APP_SuperUser_EMAIL = response.data.superuserEmail;
 
@@ -96,22 +112,27 @@ export default function (props) {
     }
 
     // Condition for past time slot booking
-    const currentTimeIST = moment().tz('Asia/Kolkata');
+    const currentTimeIST = moment().tz("Asia/Kolkata");
 
     if (moment(StartTime).isBefore(currentTimeIST)) {
       toast.error("Cannot book events for past time slots");
       setTimeout(() => {
-        toast.info(`Book your event with the current time: ${currentTimeIST.format('YYYY-MM-DD HH:mm:ss')}`);
-      }, 3000);
+        toast.info(
+          `Book your event with the current time: ${currentTimeIST.format(
+            "YYYY-MM-DD HH:mm:ss"
+          )}`
+        );
+      }, 4000);
       return;
     }
+    setIsLoading(true);
 
     const payload = {
       username: username,
       title: title,
       roomName: roomName,
-      StartTime: moment(StartTime).tz('Asia/Kolkata').format(),
-      EndTime: moment(EndTime).tz('Asia/Kolkata').format(),
+      StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
+      EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
       availability: availability,
       User: User,
     };
@@ -119,11 +140,16 @@ export default function (props) {
     const config = { headers: { "Content-Type": "application/json" } };
 
     try {
-      const { data } = await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`, payload, config);
+      const { data } = await axios.post(
+        `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
+        payload,
+        config
+      );
       localStorage.setItem("eventid", data.eventId);
+      setIsLoading(false);
       toast.success("Event is Confirmed 😊", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: false,
@@ -133,10 +159,14 @@ export default function (props) {
 
       try {
         const eventId = localStorage.getItem("eventid");
-        console.log(eventId);
-        console.log(username)
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`);
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`); // Send email to superuser
+        // console.log(eventId);
+        // console.log(username)
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+        );
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+        ); // Send email to superuser
         toast.success("Check Your Confirmation Email");
       } catch (error) {
         toast.error("Unable to send Email");
@@ -145,26 +175,113 @@ export default function (props) {
       window.location.reload();
     } catch (e) {
       if (e.response.status === 409) {
+        setIsLoading(false);
         toast.error("The slot is already booked ☹️");
       } else {
+        setIsLoading(false);
         toast.error("The slot is already booked ☹️");
         navigate("/Calendar");
       }
     }
   };
 
+  const handleclickupdate = async (event) => {
+    event.preventDefault();
+
+    console.log(event.extendedProps.User._id)
+    if (moment(EndTime).isBefore(moment(StartTime))) {
+      toast.error("EndTime cannot be less than StartTime");
+      return;
+    }
+
+    // Condition for past time slot booking
+    const currentTimeIST = moment().tz("Asia/Kolkata");
+
+    if (moment(StartTime).isBefore(currentTimeIST)) {
+      toast.error("Cannot book events for past time slots");
+      setTimeout(() => {
+        toast.info(
+          `Book your event with the current time: ${currentTimeIST.format(
+            "YYYY-MM-DD HH:mm:ss"
+          )}`
+        );
+      }, 4000);
+      return;
+    }
+    setIsLoading(true);
+
+    const payload = {
+      username: username,
+      title: title,
+      roomName: roomName,
+      StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
+      EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
+      availability: availability,
+      User: User,
+    };
+
+    const config = { headers: { "Content-Type": "application/json" } };
+
+    try {
+      const { data } = await axios.put(
+        `${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/:_id`,
+        payload,
+        config
+      );
+      localStorage.setItem("eventid", data.eventId);
+      setIsLoading(false);
+      toast.success("Event is Confirmed 😊", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+
+      try {
+        const eventId = localStorage.getItem("eventid");
+        // console.log(eventId);
+        // console.log(username)
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+        );
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+        ); // Send email to superuser
+        toast.success("Check Your Confirmation Email");
+      } catch (error) {
+        toast.error("Unable to send Email");
+      }
+
+      window.location.reload();
+    } catch (e) {
+      if (e.response.status === 409) {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+      } else {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+        navigate("/Calendar");
+      }
+    }
+  };
+
+
   //display user details
   useEffect(() => {
-    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
+    axios
+      .get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
       .then((d) => {
-        const cdata = d.data
-        setData(cdata)
-        console.log(cdata)
+        const cdata = d.data;
+        setData(cdata);
+        // console.log(cdata)
       })
-      .catch((e) => { console.log(e) })
-
-  }, [])
-
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   const sortByStartTime = (a, b) => {
     const startTimeA = new Date(a.StartTime);
@@ -178,8 +295,12 @@ export default function (props) {
   };
   const currentDate = new Date();
 
-  const activeEvents = eventData.filter((item) => new Date(item.EndTime) >= currentDate);
-  const expiredEvents = eventData.filter((item) => new Date(item.EndTime) < currentDate);
+  const activeEvents = eventData.filter(
+    (item) => new Date(item.EndTime) >= currentDate
+  );
+  const expiredEvents = eventData.filter(
+    (item) => new Date(item.EndTime) < currentDate
+  );
 
   const sortedActiveEvents = activeEvents.sort((a, b) => {
     if (a.status === "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝" && b.status !== "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝") {
@@ -210,31 +331,30 @@ export default function (props) {
     }
   };
 
-
-
   // FullCalendar Display Color Variation
   let userEmailName;
 
   useEffect(() => {
-    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
+    axios
+      .get(`${Backendapi.REACT_APP_BACKEND_API_URL}/get-events`)
       .then((d) => {
         const currentTime = moment(); // Get current system date and time
-        console.log(d.data)
-        const cdata = d.data.map(item => {
+        // console.log(d.data)
+        const cdata = d.data.map((item) => {
           const startTime = moment(item.StartTime);
           const endTime = moment(item.EndTime);
           let colorClass;
-          console.log(item)
+          // console.log(item)
           if (currentTime.isBefore(startTime)) {
-            colorClass = 'event-yellow'; // Condition 1: StartTime is not yet started
+            colorClass = "event-yellow"; // Condition 1: StartTime is not yet started
           } else if (currentTime.isBetween(startTime, endTime)) {
-            colorClass = 'event-green'; // Condition 2: StartTime is started but not yet expired
+            colorClass = "event-green"; // Condition 2: StartTime is started but not yet expired
           } else {
-            colorClass = 'event-gray'; // Condition 3: EndTime is expired
+            colorClass = "event-gray"; // Condition 3: EndTime is expired
           }
           // setuserName(item.User.username)
           userEmailName = item.User.username;
-          console.log(item)
+          // console.log(item)
           return {
             eventid: item._id,
             username: item.User.username,
@@ -244,50 +364,56 @@ export default function (props) {
             EndTime: item.EndTime,
             User: item.User,
             status: item.status,
-            colorClass: colorClass // Add colorClass property to the object
+            colorClass: colorClass, // Add colorClass property to the object
           };
         });
         // Filter out events with status "Rejected"
-        const filteredData = cdata.filter(item => item.status !== '𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝');
+        const filteredData = cdata.filter((item) => item.status !== "𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝");
         setData(filteredData);
 
         // setData(cdata);
-        console.log(cdata)
+        // console.log(cdata)
       })
 
-      .catch((e) => { console.log(e) });
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
 
-  console.log(username)
+  // console.log(username)
   // console.log(userEmailName)
 
   // Display Login User Data
 
   useEffect(() => {
-
-    const objectId = localStorage.getItem('objectId');
-    const myString = objectId.replace(/^"(.*)"$/, '$1');
-    axios.get(`${Backendapi.REACT_APP_BACKEND_API_URL}/getuserevent/${myString}`)
+    const objectId = localStorage.getItem("objectId");
+    const myString = objectId.replace(/^"(.*)"$/, "$1");
+    axios
+      .get(`${Backendapi.REACT_APP_BACKEND_API_URL}/getuserevent/${myString}`)
       .then((d) => {
-        setEventData(d.data.events)
-        console.log(d.data.events)
+        setEventData(d.data.events);
+        // console.log(d.data.events)
       })
-      .catch((e) => { console.log(e) })
-  }, [])
-
-
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   //update Event
 
   const handleEdit = async (e) => {
     e.preventDefault();
 
-    const currentTimeIST = moment().tz('Asia/Kolkata');
+    const currentTimeIST = moment().tz("Asia/Kolkata");
 
     if (moment(StartTime).isBefore(currentTimeIST)) {
       toast.error("Cannot update events for past time slots");
       setTimeout(() => {
-        toast.info(`Update your event with the current time: ${currentTimeIST.format('YYYY-MM-DD HH:mm:ss')}`);
+        toast.info(
+          `Update your event with the current time: ${currentTimeIST.format(
+            "YYYY-MM-DD HH:mm:ss"
+          )}`
+        );
       }, 3000);
       return;
     }
@@ -300,13 +426,20 @@ export default function (props) {
     const Credentials = {
       title,
       roomName,
-      StartTime: moment.tz(StartTime, 'YYYY-MM-DD HH:mm:ss', 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'),
-      EndTime: moment.tz(EndTime, 'YYYY-MM-DD HH:mm:ss', 'Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss'),
-      availability
+      StartTime: moment
+        .tz(StartTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
+        .format("YYYY-MM-DD HH:mm:ss"),
+      EndTime: moment
+        .tz(EndTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
+        .format("YYYY-MM-DD HH:mm:ss"),
+      availability,
     };
 
     try {
-      const response = await axios.put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`, Credentials);
+      const response = await axios.put(
+        `${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`,
+        Credentials
+      );
       setData(response.data);
       toast.success("Event updated successfully 😊", {
         position: toast.POSITION.TOP_RIGHT,
@@ -319,7 +452,9 @@ export default function (props) {
       });
 
       try {
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`);
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`
+        );
         toast.success("Check your email, event details have been updated");
       } catch (error) {
         toast.error("Unable to send email");
@@ -338,13 +473,13 @@ export default function (props) {
 
   //handle delete function
   const handleDelete = async () => {
-
-
     try {
-      const response = await axios.delete(`${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`);
+      const response = await axios.delete(
+        `${Backendapi.REACT_APP_BACKEND_API_URL}/delete-event/${id}`
+      );
       setData(response.data.eventId);
-      console.log(response.data.title)
-      const mailTitle = response.data.title
+      console.log(response.data.title);
+      const mailTitle = response.data.title;
       toast.success("Event deleted successfully 😊", {
         position: toast.POSITION.TOP_RIGHT,
         autoClose: 2000,
@@ -358,9 +493,13 @@ export default function (props) {
       // Send deletion confirmation email
       try {
         const eventId = localStorage.getItem("eventid");
-        console.log(username.username)
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletion/${username}/${Emailusername}/${mailTitle}`);
-        await axios.post(`${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletionSuperUser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${mailTitle}`);
+        console.log(username.username);
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletion/${username}/${Emailusername}/${mailTitle}`
+        );
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletionSuperUser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${mailTitle}`
+        );
         toast.success("Deletion confirmation email sent");
       } catch (error) {
         toast.error("Unable to send deletion confirmation email");
@@ -372,7 +511,6 @@ export default function (props) {
     window.location.reload();
     // navigate("/Dashboard");
   };
-
 
   //Modal for popup
   const handleOpenModal = () => {
@@ -394,10 +532,12 @@ export default function (props) {
     setEndTime(currentDatetime);
   }, []);
 
-
   // Function to convert UTC time to IST
   const convertToIST = (utcDateTime) => {
-    const istDateTime = moment.utc(utcDateTime).utcOffset("+05:30").format("YYYY-MM-DDTHH:mm");
+    const istDateTime = moment
+      .utc(utcDateTime)
+      .utcOffset("+05:30")
+      .format("YYYY-MM-DDTHH:mm");
     return istDateTime;
   };
 
@@ -407,51 +547,96 @@ export default function (props) {
     return utcDateTime;
   };
 
-
-
   return (
     <div>
       <NavbarCalendar />
       <div>
-
         {/* UserInput Form */}
-        <div className='text-center'>
+        <div className="">
           <>
             <Button
-              className="text-black"
-              style={{ backgroundColor: 'skyblue' }}
+              className="text-black mt-2 "
+              style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
               onClick={handleOpenModal}
             >
-
-              <span style={{ color: 'white', fontWeight: 'bold' }}>
+              <span style={{ color: "white", fontWeight: "bold" }}>
                 <i className="fa fa-plu">Schedule Meeting</i>
               </span>
             </Button>
 
-            <Modal show={showModal} onHide={handleCloseModal} centered
-              style={{ backgroundColor: 'transparent' }}
+            <Modal
+              show={showModal}
+              onHide={handleCloseModal}
+              centered
+              style={{ backgroundColor: "transparent" }}
               backdrop="static"
               keyboard={false}
-
             >
               <Modal.Header
                 closeButton
-                style={{ backgroundColor: 'lightgray' }}
+                style={{ backgroundColor: "lightgray" }}
               >
-
                 <Modal.Title>
-                  <label style={{ display: 'block', marginBottom: '10px', color: '#444', fontFamily: 'Arial', fontSize: '20px' }}>
-                    <span style={{ color: 'black', fontWeight: 'bold' }}> Hi, </span>
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>{username}</span>
-                    <span style={{ color: 'black', fontWeight: 'bold' }}> Please book your Event</span>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "10px",
+                      color: "#444",
+                      fontFamily: "Arial",
+                      fontSize: "20px",
+                    }}
+                  >
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      {" "}
+                      Hi,{" "}
+                    </span>
+                    <span style={{ color: "red", fontWeight: "bold" }}>
+                      {username}
+                    </span>
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      {" "}
+                      Please book your Event
+                    </span>
                   </label>
                 </Modal.Title>
               </Modal.Header>
 
-              <Modal.Body style={{ backgroundColor: 'lightgray' }}>
-                <form onSubmit={handleclick}
-                  style={{ backgroundColor: 'lightgray', padding: '20px', borderRadius: '5px', width: '350px' }}
+              <Modal.Body style={{ backgroundColor: "lightgray" }}>
+                <form
+                  onSubmit={handleclick}
+                  style={{
+                    backgroundColor: "lightgray",
+                    padding: "20px",
+                    borderRadius: "5px",
+                    width: "350px",
+                  }}
                 >
+                  {/* <div style={{ margin: '15px 0' }}>
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>Availability</span>
+                  <div>
+                    <label style={{ marginRight: '10px' }}>
+                      <input
+                        type="radio"
+                        name="availability"
+                        value="available"
+                        style={{ marginRight: '5px' }}
+                        onChange={(e) => setAvailability(e.target.value)}
+                      />
+                      <span style={{ color: 'blue' }}>Available</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="availability"
+                        value="not-available"
+                        style={{ marginRight: '5px' }}
+                        onChange={(e) => setAvailability(e.target.value)}
+                      />
+                      Not Available
+                    </label>
+                  </div>
+                </div> */}
+
                   {/* <input
                     type="text"
                     className="form-control"
@@ -463,7 +648,10 @@ export default function (props) {
                   /> */}
 
                   {/* <lable>Enter Your Title</lable> */}
-                  <span style={{ color: 'black', fontWeight: 'bold' }}> Enter Your Title </span>
+                  <span style={{ color: "black", fontWeight: "bold" }}>
+                    {" "}
+                    Enter Your Title{" "}
+                  </span>
                   <input
                     type="text"
                     className="form-control"
@@ -478,20 +666,35 @@ export default function (props) {
                     required
                   />
                   {/* <label>Select Room:</label> */}
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>Select Room</span>
+                  <span style={{ color: "black", fontWeight: "bold" }}>
+                    Select Room
+                  </span>
                   <select
                     className="form-control"
                     value={roomName}
                     onChange={(e) => setroomName(e.target.value)}
                     required
                   >
-                    <option value="" disabled selected>Select Room</option>
-                    <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">12 Seat</option>
+                    <option value="" disabled selected>
+                      Select Room
+                    </option>
+                    <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">
+                      12 Seat
+                    </option>
                     <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">6 Seat</option>
                   </select>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '15px' }}>
-                    <span style={{ color: 'black', fontWeight: 'bold' }}> Start Time </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      {" "}
+                      Start Time{" "}
+                    </span>
                     <input
                       type="datetime-local"
                       className="form-control"
@@ -500,7 +703,9 @@ export default function (props) {
                       required
                     />
 
-                    <span style={{ color: 'black', fontWeight: 'bold' }}>End Time</span>
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      End Time
+                    </span>
                     <input
                       type="datetime-local"
                       className="form-control"
@@ -508,18 +713,23 @@ export default function (props) {
                       onChange={(e) => setEndTime(e.target.value)}
                       required
                     />
-
                   </div>
-                  <button type="submit" className="btn btn-success">
-                    <span style={{ color: 'white', fontWeight: 'bold' }}>
-                      ADD EVENT
+                  <button
+                    type="submit"
+                    className="btn btn-success"
+                    disabled={isLoading}
+                  >
+                    <span style={{ color: "white", fontWeight: "bold" }}>
+                      {isLoading ? "ADDING EVENT..." : "ADD EVENT"}
                     </span>
                   </button>
                 </form>
               </Modal.Body>
-              <Modal.Footer style={{ backgroundColor: 'gray' }}>
+              <Modal.Footer style={{ backgroundColor: "gray" }}>
                 <Button variant="dark" onClick={handleCloseModal}>
-                  <span style={{ color: 'white', fontWeight: 'bold' }}>𝒞𝓁𝑜𝓈𝑒</span>
+                  <span style={{ color: "white", fontWeight: "bold" }}>
+                    𝒞𝓁𝑜𝓈𝑒
+                  </span>
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -527,18 +737,23 @@ export default function (props) {
         </div>
 
         {/* // Inside your component's render or return statement */}
-        <section style={{ backgroundColor: 'white' }}>
+        <section style={{ backgroundColor: "white" }}>
           <div style={{ position: "relative", zIndex: 0 }}>
             <FullCalendar
               timeZone="UTC"
-              plugins={[dayGridPlugin, timeGridPligin, InteractionPlugin, ListPlugin]}
+              plugins={[
+                dayGridPlugin,
+                timeGridPligin,
+                InteractionPlugin,
+                ListPlugin,
+              ]}
               initialView="dayGridMonth"
               events={Data}
               headerToolbar={{
-                start: 'today prev,next', // will normally be on the left. if RTL, will be on the right
-                center: 'title',
-                end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",// will normally be on the right. if RTL, will be on the left
-                eventColor: '#378006',
+                start: "today prev,next", // will normally be on the left. if RTL, will be on the right
+                center: "title",
+                end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek", // will normally be on the right. if RTL, will be on the left
+                eventColor: "#378006",
               }}
               height="80vh"
               eventDidMount={(info) => {
@@ -556,68 +771,97 @@ export default function (props) {
                   html: true,
                 });
               }}
-
               eventClassNames={(info) => {
                 return info.event.extendedProps.colorClass;
+              }}
+              
+              eventClick={(info) => {
+                console.log("Event clicked:", info.event);
+                console.log("Event title:", info.event.title);
+                console.log("Event start:", info.event.start);
+                console.log("Event end:", info.event.end);
+                console.log("Extended props:", info.event.extendedProps.EndTime);
+                console.log("endtime", info.event.EndTime);
+                console.log("totalEvents", info.event);
+                handleOpenModal(info.event);
+                handleclickupdate(info.event)
+                // handleclickupdate(info.event.extendedProps.User._id)
+
+                // console.log(info.event.extendedProps.User._id, "Event_id")
               }}
             />
           </div>
         </section>
 
-        <div className='row'>
-          <div className='mt-5 mb-4'>
-            <h2 className='text-center'>𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
+        <div className="row">
+          <div className="mt-5 mb-4">
+            <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
           </div>
         </div>
 
         {/* User Data Table View  */}
-        <div className='row'>
-          <div className='table-responsive'>
-            <table className='table table-striped table-hover table-bordered'>
-              <thead className='bg-info text-white'>
+        <div className="row">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover table-bordered">
+              <thead className="bg-info text-white">
                 <tr>
-                  <th className='text-black'>Title
+                  <th className="text-black">
+                    Title
                     <input
                       type="text"
                       value={filterTitle}
                       onChange={(e) => setFilterTitle(e.target.value)}
                       placeholder="Search Title"
-                      style={{ width: '100px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                      style={{
+                        width: "100px",
+                        height: "22px",
+                        padding: "5px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
                     />
-
                   </th>
-                  <th className='text-black'>Room Name</th>
-                  <th className='text-black'>StartTime</th>
-                  <th className='text-black'>EndTime</th>
-                  <th className='text-black'>Status</th>
-                  <th className='text-black'>Actions</th>
+                  <th className="text-black">Room Name</th>
+                  <th className="text-black">StartTime</th>
+                  <th className="text-black">EndTime</th>
+                  <th className="text-black">Status</th>
+                  <th className="text-black">Actions</th>
                 </tr>
               </thead>
 
               <tbody>
                 {sortedEventData
-                  .filter((item) => item.title.toLowerCase().includes(filterTitle.toLowerCase()))
-                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .filter((item) =>
+                    item.title.toLowerCase().includes(filterTitle.toLowerCase())
+                  )
+                  .slice(
+                    (currentPage - 1) * itemsPerPage,
+                    currentPage * itemsPerPage
+                  )
                   .map((item) => (
                     <tr key={item._id}>
                       <td>{item.title}</td>
                       <td>{item.roomName}</td>
                       <td>
-                        {item.StartTime.split('T').join(' ⋆ ').slice(0, -5)}
+                        {item.StartTime.split("T").join(" ⋆ ").slice(0, -5)}
                         <span className="clock-animation"></span>
                       </td>
                       <td>
-                        {item.EndTime.split('T').join(' ⋆ ').slice(0, -5)}
+                        {item.EndTime.split("T").join(" ⋆ ").slice(0, -5)}
                         <span className="clock-animation"></span>
                       </td>
                       <td>{item.status}</td>
                       <td style={{ minWidth: 190 }}>
                         <Button
-                          size='sm'
-                          varient='danger'
-                          style={{ backgroundColor: 'Red' }}
+                          size="sm"
+                          varient="danger"
+                          style={{ backgroundColor: "Red" }}
                           onClick={() => {
-                            handleViewShow(setRowData(item), setId(item._id), setDelete(true));
+                            handleViewShow(
+                              setRowData(item),
+                              setId(item._id),
+                              setDelete(true)
+                            );
                           }}
                         >
                           Cancel Meeting
@@ -626,34 +870,50 @@ export default function (props) {
                     </tr>
                   ))}
               </tbody>
-
-
             </table>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "10px",
+            }}
+          >
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              style={{ fontSize: '14px', padding: '5px 10px', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: 'transparent', cursor: 'pointer' }}
+              style={{
+                fontSize: "14px",
+                padding: "5px 10px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+              }}
             >
               &lt; 𝗣𝗿𝗲𝘃𝗶𝗼𝘂𝘀 𝗣𝗮𝗴𝗲
             </button>
-            <span style={{ fontSize: '14px' }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
+            <span style={{ fontSize: "14px" }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              style={{ fontSize: '14px', padding: '5px 10px', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: 'transparent', cursor: 'pointer' }}
+              style={{
+                fontSize: "14px",
+                padding: "5px 10px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+              }}
             >
               𝗡𝗲𝘅𝘁 𝗣𝗮𝗴𝗲 &gt;
             </button>
           </div>
-
         </div>
 
-
-
         {/* create modal for view data */}
-        <div className='model-box-view'>
+        <div className="model-box-view">
           <Modal
             show={ViewShow}
             onHide={handleViewClose}
@@ -662,52 +922,81 @@ export default function (props) {
           >
             <Modal.Header closeButton>
               <Modal.Title>Event Detail</Modal.Title>
-
             </Modal.Header>
             <Modal.Body>
               <div>
                 <div>
-                  <div className='form-group'>
-                    <input type='text' className='form-control' required value={RowData.title} readOnly />
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      required
+                      value={RowData.title}
+                      readOnly
+                    />
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
-                    <input type='text' className='form-control' required value={RowData.roomName} readOnly />
+                  <div className="form-group mt-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      required
+                      value={RowData.roomName}
+                      readOnly
+                    />
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
-                    <input type='text' className='form-control' required value={RowData.StartTime} readOnly />
+                  <div className="form-group mt-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      required
+                      value={RowData.StartTime}
+                      readOnly
+                    />
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
-                    <input type='text' className='form-control' required value={RowData.EndTime} readOnly />
+                  <div className="form-group mt-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      required
+                      value={RowData.EndTime}
+                      readOnly
+                    />
                   </div>
                 </div>
-
-
-
               </div>
-              {
-                Delete && (
-                  <Button type='submit' style={{ backgroundColor: 'red' }} className='btn btn-danger mt-4' onClick={handleDelete}>Confirm Again</Button>
-                )
-              }
-
-
+              {Delete && (
+                <Button
+                  type="submit"
+                  style={{ backgroundColor: "red" }}
+                  className="btn btn-danger mt-4"
+                  onClick={handleDelete}
+                >
+                  Confirm Again
+                </Button>
+              )}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant='secondary' className='text-black' style={{ backgroundColor: 'Gray' }} onClick={handleViewClose}>Close</Button>
+              <Button
+                variant="secondary"
+                className="text-black"
+                style={{ backgroundColor: "Gray" }}
+                onClick={handleViewClose}
+              >
+                Close
+              </Button>
             </Modal.Footer>
-
           </Modal>
         </div>
 
         {/* modal for Submit data to database */}
 
-        <div className='model-box-view'>
+        <div className="model-box-view">
           <Modal
             show={ViewPost}
             onHide={handlePostClose}
@@ -716,19 +1005,30 @@ export default function (props) {
           >
             <Modal.Header closeButton>
               <Modal.Title>Update Your Meeting</Modal.Title>
-
             </Modal.Header>
             <Modal.Body>
               <div>
-                <div className='form-group'>
-                  <input type='text' className='form-control' required value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Please Enter your Title' />
+                <div className="form-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Please Enter your Title"
+                  />
                 </div>
 
                 <div>
-                  <div className='form-group mt-3'>
+                  <div className="form-group mt-3">
                     <label style={{ color: "blue" }}>Select your Room</label>
-                    <select placeholder="Select Room" value={roomName} required onChange={e => setroomName(e.target.value)}>
-                      <option>  </option>
+                    <select
+                      placeholder="Select Room"
+                      value={roomName}
+                      required
+                      onChange={(e) => setroomName(e.target.value)}
+                    >
+                      <option> </option>
                       <option>RoomOne</option>
                       <option>RoomTwo</option>
                       <option>RoomThree</option>
@@ -737,32 +1037,51 @@ export default function (props) {
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
+                  <div className="form-group mt-3">
                     <label style={{ color: "blue" }}>StartTime</label>
-                    <Datetime value={StartTime} required onChange={date => setStartTime(date)} />
+                    <Datetime
+                      value={StartTime}
+                      required
+                      onChange={(date) => setStartTime(date)}
+                    />
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
+                  <div className="form-group mt-3">
                     <label style={{ color: "blue" }}>EndTime</label>
-                    <Datetime value={EndTime} required onChange={date => setEndTime(date)} />
+                    <Datetime
+                      value={EndTime}
+                      required
+                      onChange={(date) => setEndTime(date)}
+                    />
                   </div>
                 </div>
 
-                <Button type='submit' className='btn btn-success mt-4' onClick={handleclick}>Add new Event</Button>
-
+                <Button
+                  type="submit"
+                  className="btn btn-success mt-4"
+                  onClick={handleclick}
+                >
+                  Add new Event
+                </Button>
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant='secondary' className='text-black' style={{ backgroundColor: 'yellow' }} onClick={handlePostClose}>Close</Button>
+              <Button
+                variant="secondary"
+                className="text-black"
+                style={{ backgroundColor: "yellow" }}
+                onClick={handlePostClose}
+              >
+                Close
+              </Button>
             </Modal.Footer>
-
           </Modal>
         </div>
 
         {/* modal for Edit data to database */}
 
-        <div className='model-box-view'>
+        <div className="model-box-view">
           <Modal
             show={ViewEdit}
             onHide={handleEditClose}
@@ -771,74 +1090,101 @@ export default function (props) {
           >
             <Modal.Header closeButton>
               <Modal.Title>Update Your Meeting</Modal.Title>
-
             </Modal.Header>
             <Modal.Body>
               <form onSubmit={handleEdit}>
-                <div className='form-group'>
+                <div className="form-group">
                   <lable>Title</lable>
                   <input
                     type="text"
                     value={title}
-                    onChange={e => setTitle(e.target.value)}
-                    required defaultValue={RowData.title}
-                    style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                    defaultValue={RowData.title}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      marginBottom: "15px",
+                    }}
                   />
-
                 </div>
 
                 <div>
                   <select
                     value={roomName}
-                    onChange={e => setroomName(e.target.value)} defaultValue={RowData.roomName}
+                    onChange={(e) => setroomName(e.target.value)}
+                    defaultValue={RowData.roomName}
                     required
-                    style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '15px' }}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      marginBottom: "15px",
+                    }}
                   >
-
                     <option value="Big Room">Big Room</option>
                     <option value="Small Room">Small Room</option>
                     <option value="Booth One">Booth One</option>
                     <option value="Booth Two">Booth Two</option>
                   </select>
-
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
+                  <div className="form-group mt-3">
                     <label style={{ color: "blue" }}>StartTime</label>
                     <Datetime
                       value={StartTime}
-                      onChange={date => setStartTime(date)}
+                      onChange={(date) => setStartTime(date)}
                       defaultValue={RowData.StartTime}
-                      style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '5px' }}
+                      style={{
+                        padding: "8px",
+                        border: "1px solid #ccc",
+                        borderRadius: "3px",
+                        marginBottom: "5px",
+                      }}
                     />
                   </div>
                 </div>
                 <div>
-                  <div className='form-group mt-3'>
+                  <div className="form-group mt-3">
                     <label style={{ color: "blue" }}>EndTime</label>
                     <Datetime
                       value={EndTime}
-                      onChange={date => setEndTime(date)}
+                      onChange={(date) => setEndTime(date)}
                       defaultValue={RowData.EndTime}
-                      style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '3px', marginBottom: '5px' }}
+                      style={{
+                        padding: "8px",
+                        border: "1px solid #ccc",
+                        borderRadius: "3px",
+                        marginBottom: "5px",
+                      }}
                     />
                   </div>
                 </div>
-                <Button type='submit' style={{ backgroundColor: 'skyblue' }} className='btn btn-warning mt-4'>Update</Button>
+                <Button
+                  type="submit"
+                  style={{ backgroundColor: "skyblue" }}
+                  className="btn btn-warning mt-4"
+                >
+                  Update
+                </Button>
               </form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant='secondary' className='text-black' style={{ backgroundColor: 'gray' }} onClick={handleEditClose}>Close</Button>
+              <Button
+                variant="secondary"
+                className="text-black"
+                style={{ backgroundColor: "gray" }}
+                onClick={handleEditClose}
+              >
+                Close
+              </Button>
             </Modal.Footer>
-
           </Modal>
         </div>
-
       </div>
     </div>
-
-
-  )
+  );
 }
-
-
