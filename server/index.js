@@ -24,9 +24,9 @@ InitiateMongoServer();
 // middleware
 // app.use(authMiddleware);
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/", cors(corsOptions), EventRoute);
+app.use("/", EventRoute);
 app.use("/", EventTimeSlotRoute);
 app.use("/", SuperUserRoute);
 
