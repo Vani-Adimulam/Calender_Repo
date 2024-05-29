@@ -31,10 +31,14 @@ export default function (props) {
   );
   // console.log(Emailusername)
   const [title, setTitle] = useState("");
+  const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(new Date());
+  console.log(StartTime);
   const [EndTime, setEndTime] = useState(new Date());
+  console.log(EndTime);
   const [availability, setAvailability] = useState(true);
+  const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
   const [Hours, setHours, getHours] = useState(new Date());
   const navigate = useNavigate();
@@ -64,6 +68,19 @@ export default function (props) {
     setViewShow(false);
   };
 
+  const handleAvailabilityChange = (e) => {
+    const value = e.target.value;
+    if (value === "available") {
+      setAvailability(true);
+      setBooked(false);
+      setTitle("Available"); // Update title to "Available"
+    } else if (value === "book") {
+      setAvailability(false);
+      setBooked(true);
+      setTitle(""); // Update title to "Booked" or any other title you prefer
+    }
+  };
+
   // For Edit Modal*****
   const [ViewEdit, setEditShow] = useState(false);
   const handleEditShow = () => {
@@ -71,6 +88,7 @@ export default function (props) {
   };
   const handleEditClose = () => {
     setEditShow(false);
+    window.location.reload();
   };
 
   // For delete Modal*****
@@ -134,6 +152,7 @@ export default function (props) {
       StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
       EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
       availability: availability,
+      booked: booked,
       User: User,
     };
 
@@ -169,7 +188,7 @@ export default function (props) {
         ); // Send email to superuser
         toast.success("Check Your Confirmation Email");
       } catch (error) {
-        toast.error("Unable to send Email");
+        // toast.error("Unable to send Email");
       }
 
       window.location.reload();
@@ -184,90 +203,6 @@ export default function (props) {
       }
     }
   };
-
-  const handleclickupdate = async (event) => {
-    event.preventDefault();
-
-    console.log(event.extendedProps.User._id)
-    if (moment(EndTime).isBefore(moment(StartTime))) {
-      toast.error("EndTime cannot be less than StartTime");
-      return;
-    }
-
-    // Condition for past time slot booking
-    const currentTimeIST = moment().tz("Asia/Kolkata");
-
-    if (moment(StartTime).isBefore(currentTimeIST)) {
-      toast.error("Cannot book events for past time slots");
-      setTimeout(() => {
-        toast.info(
-          `Book your event with the current time: ${currentTimeIST.format(
-            "YYYY-MM-DD HH:mm:ss"
-          )}`
-        );
-      }, 4000);
-      return;
-    }
-    setIsLoading(true);
-
-    const payload = {
-      username: username,
-      title: title,
-      roomName: roomName,
-      StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
-      EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
-      availability: availability,
-      User: User,
-    };
-
-    const config = { headers: { "Content-Type": "application/json" } };
-
-    try {
-      const { data } = await axios.put(
-        `${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/:_id`,
-        payload,
-        config
-      );
-      localStorage.setItem("eventid", data.eventId);
-      setIsLoading(false);
-      toast.success("Event is Confirmed 😊", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
-
-      try {
-        const eventId = localStorage.getItem("eventid");
-        // console.log(eventId);
-        // console.log(username)
-        await axios.post(
-          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
-        );
-        await axios.post(
-          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
-        ); // Send email to superuser
-        toast.success("Check Your Confirmation Email");
-      } catch (error) {
-        toast.error("Unable to send Email");
-      }
-
-      window.location.reload();
-    } catch (e) {
-      if (e.response.status === 409) {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-      } else {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-        navigate("/Calendar");
-      }
-    }
-  };
-
 
   //display user details
   useEffect(() => {
@@ -343,15 +278,50 @@ export default function (props) {
         const cdata = d.data.map((item) => {
           const startTime = moment(item.StartTime);
           const endTime = moment(item.EndTime);
+          // console.log(endTime._i)
           let colorClass;
           // console.log(item)
-          if (currentTime.isBefore(startTime)) {
-            colorClass = "event-yellow"; // Condition 1: StartTime is not yet started
-          } else if (currentTime.isBetween(startTime, endTime)) {
-            colorClass = "event-green"; // Condition 2: StartTime is started but not yet expired
+          // console.log(currentTime.isAfter(StartTime), "checked time")
+          // if(currentTime.isAfter(startTime)){
+          //   if (currentTime.isBefore(startTime)  ) {
+          //     // console.log("Yes beforetime")
+          //     colorClass = "event-gray"; // Condition 1: StartTime is not yet started
+          //   } else if (currentTime.isBetween(startTime, endTime) && !item.availability)  {
+          //     colorClass = "event-yellow"; // Condition 2: StartTime is started but not yet expired
+          //   } else if (currentTime.isBefore(startTime) && item.booked) {
+          //     colorClass = "event-green"
+          //   }
+          // }else {
+          //   // console.log("Yes after time")
+          //   colorClass = "event-past"; // Condition 3: EndTime is expired
+          // }
+
+          // console.log(item)
+          const date1 = moment(new Date()).format();
+          // console.log(date1)
+          const date2 = startTime._i;
+          // console.log(date2)
+          // console.log(date1 > date2, "Checking", item.title);
+          if (date1 > date2) {
+            colorClass = "event-gray";
           } else {
-            colorClass = "event-gray"; // Condition 3: EndTime is expired
+            if (item.availability && !item.booked) {
+              colorClass = "event-yellow"; // Condition 1: Availability is true and not booked
+            } else if (item.booked && !item.availability) {
+              colorClass = "event-green"; // Condition 2: Booked is true
+            } else {
+              colorClass = "event-gray"; // Condition 3: Default condition
+            }
           }
+
+          // console.log(moment(new Date()).isAfter(startTime), "check");
+          // if (item.availability && !item.booked) {
+          //   colorClass = "event-yellow"; // Condition 1: Availability is true and not booked
+          // } else if (item.booked) {
+          //   colorClass = "event-green"; // Condition 2: Booked is true
+          // } else {
+          //   colorClass = "event-gray"; // Condition 3: Default condition
+          // }
           // setuserName(item.User.username)
           userEmailName = item.User.username;
           // console.log(item)
@@ -402,6 +372,7 @@ export default function (props) {
   //update Event
 
   const handleEdit = async (e) => {
+    console.log(e, "edit update");
     e.preventDefault();
 
     const currentTimeIST = moment().tz("Asia/Kolkata");
@@ -433,6 +404,7 @@ export default function (props) {
         .tz(EndTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
         .format("YYYY-MM-DD HH:mm:ss"),
       availability,
+      booked,
     };
 
     try {
@@ -455,9 +427,9 @@ export default function (props) {
         await axios.post(
           `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`
         );
-        toast.success("Check your email, event details have been updated");
+        // toast.success("Check your email, event details have been updated");
       } catch (error) {
-        toast.error("Unable to send email");
+        // toast.error("Unable to send email");
       }
     } catch (error) {
       if (error.response.status === 409) {
@@ -469,6 +441,34 @@ export default function (props) {
     }
 
     navigate("/Dashboard");
+  };
+
+  const handleUpdateMeeting = async (id) => {
+    console.log(id, "6655b651bce7e1198c10fc64");
+    console.log(title);
+    console.log(roomName);
+    console.log(StartTime, "Start time");
+    console.log(EndTime, "End time");
+    const response = await axios.put(
+      `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
+      { title, roomName, StartTime, EndTime }
+    );
+    if (response.status == 200) {
+      toast.success("Event Updated Successfully");
+
+      // Set a timeout to reload the page after a delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+      // setTimeout(() => {
+      //   console.log("3sec");
+      // }, 3000);
+      // console.log("changed");
+      // window.location.reload();
+    } else {
+      console.log("no change");
+      window.location.reload();
+    }
   };
 
   //handle delete function
@@ -554,15 +554,66 @@ export default function (props) {
         {/* UserInput Form */}
         <div className="">
           <>
-            <Button
-              className="text-black mt-2 "
-              style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
-              onClick={handleOpenModal}
-            >
-              <span style={{ color: "white", fontWeight: "bold" }}>
-                <i className="fa fa-plu">Schedule Meeting</i>
-              </span>
-            </Button>
+            <div class="d-flex flex-row">
+              <Button
+                className="text-black mt-2 "
+                style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
+                onClick={handleOpenModal}
+              >
+                <span style={{ color: "white", fontWeight: "bold" }}>
+                  <i className="fa fa-plu">Schedule Meeting</i>
+                </span>
+              </Button>
+              <div
+                style={{
+                  // border: "2px solid #ccc",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "30%",
+                  padding: "10px",
+                  marginLeft:" 30px",
+                  marginTop:"15px"
+                }}
+              > 
+              <b>Events Info :</b> 
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "50%",
+                      backgroundColor: "#bdcdd8",
+                      marginRight: "5px",
+                    }}
+                  ></div>
+                  <span>Completed</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "50%",
+                      backgroundColor: "#50C878",
+                      marginRight: "5px",
+                    }}
+                  ></div>
+                  <span>Available</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "50%",
+                      backgroundColor: "#73c2fb",
+                      marginRight: "5px",
+                    }}
+                  ></div>
+                  <span>Booked</span>
+                </div>
+              </div>
+            </div>
 
             <Modal
               show={showModal}
@@ -611,31 +662,37 @@ export default function (props) {
                     width: "350px",
                   }}
                 >
-                  {/* <div style={{ margin: '15px 0' }}>
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>Availability</span>
-                  <div>
-                    <label style={{ marginRight: '10px' }}>
-                      <input
-                        type="radio"
-                        name="availability"
-                        value="available"
-                        style={{ marginRight: '5px' }}
-                        onChange={(e) => setAvailability(e.target.value)}
-                      />
-                      <span style={{ color: 'blue' }}>Available</span>
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="availability"
-                        value="not-available"
-                        style={{ marginRight: '5px' }}
-                        onChange={(e) => setAvailability(e.target.value)}
-                      />
-                      Not Available
-                    </label>
+                  <div style={{ margin: "15px 0" }}>
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      Availability
+                    </span>
+                    <div>
+                      <label style={{ marginRight: "10px" }}>
+                        <input
+                          type="radio"
+                          name="availability"
+                          value="available"
+                          style={{ marginRight: "5px" }}
+                          onChange={handleAvailabilityChange}
+                          checked={availability === true && booked === false}
+                          required
+                        />
+                        <span style={{ color: "" }}>Available</span>
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="availability"
+                          value="book"
+                          style={{ marginRight: "5px" }}
+                          onChange={handleAvailabilityChange}
+                          checked={availability === false && booked === true}
+                          required
+                        />
+                        Book
+                      </label>
+                    </div>
                   </div>
-                </div> */}
 
                   {/* <input
                     type="text"
@@ -656,13 +713,9 @@ export default function (props) {
                     type="text"
                     className="form-control"
                     value={title}
-                    onChange={(e) => {
-                      const inputValue = e.target.value.trimStart(); // Remove leading spaces
-                      setTitle(inputValue);
-                    }}
-                    onBlur={() => {
-                      setTitle(title.trimEnd()); // Remove trailing spaces on blur
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
+                    onBlur={() => setTitle(title.trim())}
+                    disabled={availability === true} // Disabled if available
                     required
                   />
                   {/* <label>Select Room:</label> */}
@@ -774,21 +827,79 @@ export default function (props) {
               eventClassNames={(info) => {
                 return info.event.extendedProps.colorClass;
               }}
-              
-              // eventClick={(info) => {
-              //   console.log("Event clicked:", info.event);
-              //   console.log("Event title:", info.event.title);
-              //   console.log("Event start:", info.event.start);
-              //   console.log("Event end:", info.event.end);
-              //   console.log("Extended props:", info.event.extendedProps.EndTime);
-              //   console.log("endtime", info.event.EndTime);
-              //   console.log("totalEvents", info.event);
-              //   handleOpenModal(info.event);
-              //   handleclickupdate(info.event)
-              //   // handleclickupdate(info.event.extendedProps.User._id)
+              eventClick={(info) => {
+                // console.log("Event clicked:", info.event);
+                // console.log("Event title:", info.event.title);
+                // console.log("Event start:", info.event.start);
+                // console.log("Event end:", info.event.end);
+                // console.log(
+                //   "Extended props:",
+                //   info.event.extendedProps.EndTime
+                // );
+                // console.log("Id", info.event.extendedProps.User._id);
+                // console.log("endtime", info.event.EndTime);
+                console.log("totalEvents", info.event);
+                const currentDateTime = moment().format("YYYY-MM-DDTHH:mm"); // Current date and time
+                console.log(currentDateTime, "Current time");
+                const startTime = moment(info.event.start)
+                  // .subtract(5, "hours")
+                  // .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm");
+                console.log(StartTime, "Start time");
+                const endTime = moment(info.event.extendedProps.EndTime)
+                  // .subtract(5, "hours")
+                  // .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm");
+                console.log(EndTime);
+                // Now set them in the same format
 
-              //   // console.log(info.event.extendedProps.User._id, "Event_id")
-              // }}
+                // Convert event start time to moment object
+                // handleOpenModal(info.event);
+                // if (startTime.isBefore(currentDateTime)) {
+                //   // If event start time is in the past, display an error message
+                //   alert("Cannot edit past events.");
+                //   return; // Exit the function, preventing the modal from opening
+                // }
+                const date5 = moment(new Date()).format();
+                console.log(date5);
+                const date6 = moment(info.event.start)
+                  .subtract(5, "hours")
+                  .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm");
+                console.log(date6);
+                // console.log(date1 > date2, "Checking", item.title);
+                if (date5 > date6) {
+                  alert("Editing past events is not allowed.");
+                  return;
+                }
+                setStartTime(startTime);
+                setEndTime(endTime);
+                setEditShow(true);
+                // setUserMeetingInfo({
+                //   title: info.event.title,
+                //   selectRoom: info.event.extendedProps.roomName,
+                //   startTime: info.event.start,
+                //   endTime: info.event.EndTime,
+                // });
+                setTitle(info.event.title);
+                setroomName(info.event.extendedProps.roomName);
+
+                setId(info.event.extendedProps.eventid);
+
+                // setId(info.event.extendedProps.User._id)
+                // console.log(id, "for even id ");
+                // console.log(userMeetingInfo, "Info");
+                // setRowData(info.event.extendedProps.User);
+                // setId(info.event.extendedProps.User._id);
+                // {
+                //   handleEdit(info.event);
+                // }
+                //
+                // handleclickupdate(info.event);
+                // handleclickupdate(info.event.extendedProps.User._id)
+
+                // console.log(info.event.extendedProps.User._id, "Event_id")
+              }}
             />
           </div>
         </section>
@@ -1092,15 +1203,23 @@ export default function (props) {
               <Modal.Title>Update Your Meeting</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <form onSubmit={handleEdit}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  console.log(id, "meeting id");
+                  handleUpdateMeeting(id);
+                }}
+              >
                 <div className="form-group">
-                  <lable>Title</lable>
+                  <lable style={{ color: "black", fontWeight: "bold" }}>
+                    Title
+                  </lable>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
-                    defaultValue={RowData.title}
+                    defaultValue={title}
                     style={{
                       width: "100%",
                       padding: "8px",
@@ -1112,6 +1231,9 @@ export default function (props) {
                 </div>
 
                 <div>
+                  <span style={{ color: "black", fontWeight: "bold" }}>
+                    Select Room
+                  </span>
                   <select
                     value={roomName}
                     onChange={(e) => setroomName(e.target.value)}
@@ -1125,35 +1247,79 @@ export default function (props) {
                       marginBottom: "15px",
                     }}
                   >
-                    <option value="Big Room">Big Room</option>
-                    <option value="Small Room">Small Room</option>
-                    <option value="Booth One">Booth One</option>
-                    <option value="Booth Two">Booth Two</option>
+                    <option value="" disabled selected>
+                      Select Room
+                    </option>
+                    <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">
+                      𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦
+                    </option>
+                    <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">
+                      𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦
+                    </option>
                   </select>
                 </div>
+                {/* <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      {" "}
+                      Start Time{" "}
+                    </span>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={StartTime}
+                      onChange={(date) => setStartTime(date)}
+                      defaultValue={RowData.StartTime}
+                      required
+                    />
+
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      End Time
+                    </span>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={EndTime}
+                      onChange={(date) => setEndTime(date)}
+                      defaultValue={RowData.EndTime}
+                      required
+                    />
+                  </div> */}
                 <div>
                   <div className="form-group mt-3">
-                    <label style={{ color: "blue" }}>StartTime</label>
+                    <label style={{ color: "black", fontWeight: "bold" }}>
+                      StartTime
+                    </label>
                     <Datetime
                       value={StartTime}
                       onChange={(date) => setStartTime(date)}
                       defaultValue={RowData.StartTime}
+                      className="pointer-events-none"
                       style={{
                         padding: "8px",
                         border: "1px solid #ccc",
                         borderRadius: "3px",
                         marginBottom: "5px",
                       }}
+                      disabled
                     />
                   </div>
                 </div>
                 <div>
                   <div className="form-group mt-3">
-                    <label style={{ color: "blue" }}>EndTime</label>
+                    <label style={{ color: "black", fontWeight: "bold" }}>
+                      EndTime
+                    </label>
                     <Datetime
                       value={EndTime}
                       onChange={(date) => setEndTime(date)}
                       defaultValue={RowData.EndTime}
+                      className="pointer-events-none"
                       style={{
                         padding: "8px",
                         border: "1px solid #ccc",

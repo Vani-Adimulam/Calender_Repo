@@ -19,6 +19,9 @@ const EventTimeSlotRoute = require("./router/EventTimeSlotRoute");
 const EventRoute = require("./router/EventRoutes");
 const SuperUserRoute = require("./router/SuperUserRoute");
 const authMiddleware = require("./config/authMiddleware");
+const Event = require("./modal/Event");
+const { events } = require("./modal/EventTimeSlots");
+const { default: mongoose } = require("mongoose");
 
 InitiateMongoServer();
 // middleware
@@ -34,6 +37,69 @@ const _dirname = path.dirname("");
 const builPath = path.join(_dirname, "../client/build");
 // app.use(express.static(builPath))
 app.use(express.static(path.join(builPath)));
+
+app.get("/", (req, res) => {
+  res.json({ message: "API Working" });
+});
+// app.get("/update/title/:id/title", async(req,res)=>{
+app.put("/update/title/:id", async (req, res) => {
+  const { id } = req.params;
+  const {title, roomName, StartTime, EndTime} = req.body
+  
+  console.log(req.params);
+  try {
+    console.log("Received ID:", id);
+    console.log("New Title:", title);
+
+    // Ensure the ID is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid event ID" });
+    }
+
+    const existingEvent = await Event.findByIdAndUpdate(
+      id,
+      {
+        title,
+        roomName,
+        StartTime,
+        EndTime,
+        availability: false,
+        booked: true,
+      },
+      { new: true }
+    );
+
+    if (!existingEvent) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.status(200).json({ existingEvent });
+    console.log("Updated Event:", existingEvent);
+  } catch (error) {
+    console.error("Error updating event:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// const fun = async () => {
+//   try {
+//     const existingEvent = await Event.findByIdAndUpdate(
+//       '663b66f231d99bab8268507a',  // Pass the ID directly
+//       { title: 'veera hike meeting' }, // Update data
+//       { new: true } // Options to return the updated document
+//     );
+//     console.log(existingEvent);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// fun();
+
+app.use("/", sendEmail);
+// router
+
+app.use("/user", userRouter);
 app.get("/*", function (req, res) {
   res.sendFile(
     "index.html",
@@ -45,14 +111,6 @@ app.get("/*", function (req, res) {
     }
   );
 });
-
-app.get("/", (req, res) => {
-  res.json({ message: "API Working" });
-});
-app.use("/", sendEmail);
-// router
-
-app.use("/user", userRouter);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log(`Server Started at PORT ${process.env.PORT}`);
