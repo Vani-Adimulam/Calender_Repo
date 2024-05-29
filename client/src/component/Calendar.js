@@ -34,9 +34,9 @@ export default function (props) {
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
-  console.log(StartTime,"StartTime");
+  console.log(StartTime,"StartTime", "Actual time");
   const [EndTime, setEndTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
-  console.log(EndTime);
+  console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
@@ -123,7 +123,8 @@ export default function (props) {
   //create a event
   const handleclick = async (event) => {
     event.preventDefault();
-
+    console.log(StartTime)
+    console.log(EndTime)
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
@@ -810,16 +811,27 @@ export default function (props) {
               }}
               height="80vh"
               eventDidMount={(info) => {
+                const startTime = moment(info.event.start)
+                .subtract(5, "hours")
+                .subtract(30, "minutes")
+                .format("YYYY-MM-DDTHH:mm");
+              const endTime = moment(info.event.extendedProps.EndTime)
+                .subtract(5, "hours")
+                .subtract(30, "minutes")
+                .format("YYYY-MM-DDTHH:mm");
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
                   trigger: "hover",
                   customClass: "PopoverStyle",
+                  
                   content: `
                     <strong>Title:</strong>${info.event.title}</span><br>
                     <strong>Room Name:</strong> ${info.event.extendedProps.roomName}<br>
                     <strong>Username:</strong> ${info.event.extendedProps.username}<br>
-                    <strong>Meeting:</strong> ${info.event.extendedProps.status}
+                    <strong>Meeting:</strong> ${info.event.extendedProps.status}<br>
+                    <strong>Event Start:</strong> ${startTime}<br>
+                    <strong>Event End:</strong> ${endTime}<br>
                   `,
                   html: true,
                 });
