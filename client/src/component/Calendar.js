@@ -33,9 +33,9 @@ export default function (props) {
   const [title, setTitle] = useState("");
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
-  const [StartTime, setStartTime] = useState(new Date());
-  console.log(StartTime);
-  const [EndTime, setEndTime] = useState(new Date());
+  const [StartTime, setStartTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
+  console.log(StartTime,"StartTime");
+  const [EndTime, setEndTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
   console.log(EndTime);
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
@@ -523,14 +523,14 @@ export default function (props) {
 
   // StartTime and EndTime Input field Time Display Function
 
-  useEffect(() => {
-    // Get the current datetime
-    const currentDatetime = new Date().toISOString().slice(0, 16);
+  // useEffect(() => {
+  //   // Get the current datetime
+  //   const currentDatetime = new Date().toISOString().slice(0, 16);
 
-    // Set the current datetime as the initial value for StartTime and EndTime
-    setStartTime(currentDatetime);
-    setEndTime(currentDatetime);
-  }, []);
+  //   // Set the current datetime as the initial value for StartTime and EndTime
+  //   setStartTime(currentDatetime);
+  //   setEndTime(currentDatetime);
+  // }, []);
 
   // Function to convert UTC time to IST
   const convertToIST = (utcDateTime) => {
@@ -751,8 +751,8 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={StartTime}
-                      onChange={(e) => setStartTime(e.target.value)}
+                      value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
+                      onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
                       required
                     />
 
@@ -762,8 +762,8 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={EndTime}
-                      onChange={(e) => setEndTime(e.target.value)}
+                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
+                      onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
                       required
                     />
                   </div>
@@ -1295,7 +1295,15 @@ export default function (props) {
                     <label style={{ color: "black", fontWeight: "bold" }}>
                       StartTime
                     </label>
-                    <Datetime
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
+                      // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}
+                      onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      required
+                    />
+                    {/* <Datetime
                       value={StartTime}
                       onChange={(date) => setStartTime(date)}
                       defaultValue={RowData.StartTime}
@@ -1307,7 +1315,7 @@ export default function (props) {
                         marginBottom: "5px",
                       }}
                       disabled
-                    />
+                    /> */}
                   </div>
                 </div>
                 <div>
@@ -1315,7 +1323,15 @@ export default function (props) {
                     <label style={{ color: "black", fontWeight: "bold" }}>
                       EndTime
                     </label>
-                    <Datetime
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
+                      // defaultValue={moment(RowData.EndTime).format("YYYY-MM-DDTHH:mm")}
+                      onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      required
+                    />
+                    {/* <Datetime
                       value={EndTime}
                       onChange={(date) => setEndTime(date)}
                       defaultValue={RowData.EndTime}
@@ -1326,7 +1342,7 @@ export default function (props) {
                         borderRadius: "3px",
                         marginBottom: "5px",
                       }}
-                    />
+                    /> */}
                   </div>
                 </div>
                 <Button
