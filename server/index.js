@@ -12,6 +12,8 @@ const corsOptions = {
 };
 
 const bodyParser = require("body-parser");
+const moment = require("moment-timezone");
+
 const InitiateMongoServer = require("./config/db");
 const userRouter = require("./router/user");
 const sendEmail = require("./controller/sendEmail");
@@ -56,25 +58,53 @@ app.put("/update/title/:id", async (req, res) => {
       return res.status(400).json({ error: "Invalid event ID" });
     }
 
-    const existingEvent = await Event.findByIdAndUpdate(
-      id,
-      {
-        title,
-        roomName,
-        StartTime,
-        EndTime,
-        availability: false,
-        booked: true,
-      },
-      { new: true }
-    );
+    const currentTimeIST = moment()
+      .tz("Asia/Kolkata")
+      .format("YYYY-MM-DD HH:mm:ss");
 
-    if (!existingEvent) {
-      return res.status(404).json({ error: "Event not found" });
+    // Check if StartTime is in the future
+    if (new Date(StartTime) < new Date(currentTimeIST)) {
+      return res
+        .status(400)
+        .json({ message: "Cannot book events for past time slots" });
     }
 
-    res.status(200).json({ existingEvent });
-    console.log("Updated Event:", existingEvent);
+    // Check if EndTime is less than StartTime
+    if (new Date(EndTime) < new Date(StartTime)) {
+      return res
+        .status(400)
+        .json({ message: "EndTime cannot be less than StartTime" });
+    }
+
+    const existingSameEvent = await Event.findOne({
+      _id: { $ne: id }, // Skip the event with the provided id
+      roomName,
+      booked:true,
+      availability:false,
+      StartTime: { $lte: StartTime },
+      EndTime: { $gte: EndTime },
+    });
+
+    if(!existingSameEvent){
+      const existingEvent = await Event.findByIdAndUpdate(
+        id,
+        {
+          title,
+          roomName,
+          StartTime,
+          EndTime,
+          availability: false,
+          booked: true,
+        },
+        { new: true }
+      );
+      if (!existingEvent) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      res.status(200).json({ existingEvent });
+      console.log("Updated Event:", existingEvent);
+    }
+    
   } catch (error) {
     console.error("Error updating event:", error);
     res.status(500).json({ error: "Server error" });

@@ -34,7 +34,7 @@ export default function (props) {
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
-  console.log(StartTime,"StartTime", "Actual time");
+  console.log(StartTime, "StartTime", "Actual time");
   const [EndTime, setEndTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
   console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
@@ -450,9 +450,38 @@ export default function (props) {
     console.log(roomName);
     console.log(StartTime, "Start time");
     console.log(EndTime, "End time");
+
+    if (moment(EndTime).isBefore(moment(StartTime))) {
+      toast.error("EndTime cannot be less than StartTime");
+      return;
+    }
+
+    // Condition for past time slot booking
+    const currentTimeIST = moment().tz("Asia/Kolkata");
+
+    if (moment(StartTime).isBefore(currentTimeIST)) {
+      toast.error("Cannot book events for past time slots");
+      setTimeout(() => {
+        toast.info(
+          `Book your event with the current time: ${currentTimeIST.format(
+            "YYYY-MM-DD HH:mm:ss"
+          )}`
+        );
+      }, 4000);
+      return;
+    }
+
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
-      { title, roomName, StartTime, EndTime }
+      {
+        title, roomName, StartTime: moment(StartTime)
+          .add(5, "hours")
+          .add(30, "minutes")
+          .format("YYYY-MM-DDTHH:mm"), EndTime: moment(EndTime)
+            .add(5, "hours")
+            .add(30, "minutes")
+            .format("YYYY-MM-DDTHH:mm")
+      }
     );
     if (response.status == 200) {
       toast.success("Event Updated Successfully");
@@ -467,6 +496,14 @@ export default function (props) {
       // console.log("changed");
       // window.location.reload();
     } else {
+      if (response.status === 409) {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+      } else {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+        navigate("/Calendar");
+      }
       console.log("no change");
       window.location.reload();
     }
@@ -572,11 +609,11 @@ export default function (props) {
                   justifyContent: "space-between",
                   width: "30%",
                   padding: "10px",
-                  marginLeft:" 30px",
-                  marginTop:"15px"
+                  marginLeft: " 30px",
+                  marginTop: "15px"
                 }}
-              > 
-              <b>Events Info :</b> 
+              >
+                <b>Events Info :</b>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div
                     style={{
@@ -812,19 +849,19 @@ export default function (props) {
               height="80vh"
               eventDidMount={(info) => {
                 const startTime = moment(info.event.start)
-                .subtract(5, "hours")
-                .subtract(30, "minutes")
-                .format("YYYY-MM-DDTHH:mm");
-              const endTime = moment(info.event.extendedProps.EndTime)
-                .subtract(5, "hours")
-                .subtract(30, "minutes")
-                .format("YYYY-MM-DDTHH:mm");
+                  .subtract(5, "hours")
+                  .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm");
+                const endTime = moment(info.event.extendedProps.EndTime)
+                  .subtract(5, "hours")
+                  .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm");
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
                   trigger: "hover",
                   customClass: "PopoverStyle",
-                  
+
                   content: `
                     <strong>Title:</strong>${info.event.title}</span><br>
                     <strong>Room Name:</strong> ${info.event.extendedProps.roomName}<br>
@@ -884,8 +921,15 @@ export default function (props) {
                   alert("Editing past events is not allowed.");
                   return;
                 }
-                setStartTime(startTime);
-                setEndTime(endTime);
+                setStartTime(moment(info.event.start)
+                  .subtract(5, "hours")
+                  .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm"));
+                console.log(startTime, "update time ");
+                setEndTime(moment(info.event.extendedProps.EndTime)
+                  .subtract(5, "hours")
+                  .subtract(30, "minutes")
+                  .format("YYYY-MM-DDTHH:mm"));
                 setEditShow(true);
                 // setUserMeetingInfo({
                 //   title: info.event.title,
@@ -1310,8 +1354,9 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
-                      // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}
+                      value={StartTime}
+                      // value="2024-06-01T06:24"
+                      // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}//moment(StartTime).format("YYYY-MM-DDTHH:mm")2024-06-01T06:24
                       onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
                       required
                     />
@@ -1338,7 +1383,7 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
+                      value={moment(new Date(EndTime).toISOString()).tz("Asia/Kolkata").format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.EndTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
                       required
