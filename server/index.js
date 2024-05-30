@@ -44,6 +44,102 @@ app.get("/", (req, res) => {
   res.json({ message: "API Working" });
 });
 // app.get("/update/title/:id/title", async(req,res)=>{
+
+// app.put("/update/title/:id",async (req, res) => {
+//   const {
+//     username,
+//     title,
+//     roomName,
+//     StartTime,
+//     EndTime,
+//     availability,
+//     booked,
+//     User,
+//   } = req.body;
+
+//   const startTimeIST = moment
+//     .tz(StartTime, "YYYY-MM-DD HH:mm:ss", "UTC")
+//     .tz("Asia/Kolkata")
+//     .format("YYYY-MM-DD HH:mm:ss");
+//   const endTimeIST = moment
+//     .tz(EndTime, "YYYY-MM-DD HH:mm:ss", "UTC")
+//     .tz("Asia/Kolkata")
+//     .format("YYYY-MM-DD HH:mm:ss");
+
+//   try {
+//     const currentTimeIST = moment()
+//       .tz("Asia/Kolkata")
+//       .format("YYYY-MM-DD HH:mm:ss");
+
+//     // Check if StartTime is in the future
+//     if (new Date(startTimeIST) < new Date(currentTimeIST)) {
+//       return res
+//         .status(400)
+//         .json({ message: "Cannot book events for past time slots" });
+//     }
+
+//     // Check if EndTime is less than StartTime
+//     if (new Date(EndTime) < new Date(StartTime)) {
+//       return res
+//         .status(400)
+//         .json({ message: "EndTime cannot be less than StartTime" });
+//     }
+
+//     const existingEvent = await Event.findOne({
+//       roomName,
+//       StartTime: { $lte: endTimeIST },
+//       EndTime: { $gte: startTimeIST },
+//       status: "𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝",
+//     });
+
+//     if (existingEvent) {
+//       // Replace the existing rejected event with the new event
+//       existingEvent.username = username;
+//       existingEvent.title = title;
+//       existingEvent.StartTime = startTimeIST;
+//       existingEvent.EndTime = endTimeIST;
+//       existingEvent.availability = availability;
+//       existingEvent.booked = booked;
+//       existingEvent.User = User;
+//       existingEvent.status = "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝";
+//       await existingEvent.save();
+
+//       console.log("Existing Rejected Event:", existingEvent._id);
+//       res
+//         .status(200)
+//         .json({
+//           message: "Existing rejected event replaced and pending approval",
+//           eventId: existingEvent._id,
+//         });
+//     } else {
+//       const event = await Event.create({
+//         username,
+//         title,
+//         roomName,
+//         StartTime: startTimeIST,
+//         EndTime: endTimeIST,
+//         availability,
+//         booked,
+//         User,
+//         status: "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝", // Set the initial status as 'initiated'
+//       });
+
+//       const eventId = event._id.toString();
+
+//       console.log("New Event:", eventId);
+//       res
+//         .status(201)
+//         .json({ message: "Event created and pending approval", eventId });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(400).json({ err, message: "Something went wrong" });
+//   }
+// }
+
+// )
+
+// working
 app.put("/update/title/:id", async (req, res) => {
   const { id } = req.params;
   const {title, roomName, StartTime, EndTime} = req.body
@@ -111,18 +207,18 @@ app.put("/update/title/:id", async (req, res) => {
   }
 });
 
-// const fun = async () => {
-//   try {
-//     const existingEvent = await Event.findByIdAndUpdate(
-//       '663b66f231d99bab8268507a',  // Pass the ID directly
-//       { title: 'veera hike meeting' }, // Update data
-//       { new: true } // Options to return the updated document
-//     );
-//     console.log(existingEvent);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
+const fun = async () => {
+  try {
+    const existingEvent = await Event.findByIdAndUpdate(
+      '663b66f231d99bab8268507a',  // Pass the ID directly
+      { title: 'veera hike meeting' }, // Update data
+      { new: true } // Options to return the updated document
+    );
+    console.log(existingEvent);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // fun();
 

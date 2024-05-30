@@ -33,9 +33,13 @@ export default function (props) {
   const [title, setTitle] = useState("");
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
-  const [StartTime, setStartTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
+  const [StartTime, setStartTime] = useState(
+    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  );
   // console.log(StartTime, "StartTime", "Actual time");
-  const [EndTime, setEndTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
+  const [EndTime, setEndTime] = useState(
+    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  );
   // console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
@@ -123,8 +127,8 @@ export default function (props) {
   //create a event
   const handleclick = async (event) => {
     event.preventDefault();
-    console.log(StartTime)
-    console.log(EndTime)
+    console.log(StartTime);
+    console.log(EndTime);
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
@@ -372,84 +376,84 @@ export default function (props) {
 
   //update Event
 
-  const handleEdit = async (e) => {
-    console.log(e, "edit update");
-    e.preventDefault();
+  // const handleEdit = async (e) => {
+  //   console.log(e, "edit update");
+  //   e.preventDefault();
 
-    const currentTimeIST = moment().tz("Asia/Kolkata");
+  //   const currentTimeIST = moment().tz("Asia/Kolkata");
 
-    if (moment(StartTime).isBefore(currentTimeIST)) {
-      toast.error("Cannot update events for past time slots");
-      setTimeout(() => {
-        toast.info(
-          `Update your event with the current time: ${currentTimeIST.format(
-            "YYYY-MM-DD HH:mm:ss"
-          )}`
-        );
-      }, 3000);
-      return;
-    }
+  //   if (moment(StartTime).isBefore(currentTimeIST)) {
+  //     toast.error("Cannot update events for past time slots");
+  //     setTimeout(() => {
+  //       toast.info(
+  //         `Update your event with the current time: ${currentTimeIST.format(
+  //           "YYYY-MM-DD HH:mm:ss"
+  //         )}`
+  //       );
+  //     }, 3000);
+  //     return;
+  //   }
 
-    if (moment(EndTime).isBefore(moment(StartTime))) {
-      toast.error("EndTime cannot be less than StartTime");
-      return;
-    }
+  //   if (moment(EndTime).isBefore(moment(StartTime))) {
+  //     toast.error("EndTime cannot be less than StartTime");
+  //     return;
+  //   }
 
-    const Credentials = {
-      title,
-      roomName,
-      StartTime: moment
-        .tz(StartTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
-        .format("YYYY-MM-DD HH:mm:ss"),
-      EndTime: moment
-        .tz(EndTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
-        .format("YYYY-MM-DD HH:mm:ss"),
-      availability,
-      booked,
-    };
+  //   const Credentials = {
+  //     title,
+  //     roomName,
+  //     StartTime: moment
+  //       .tz(StartTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
+  //       .format("YYYY-MM-DD HH:mm:ss"),
+  //     EndTime: moment
+  //       .tz(EndTime, "YYYY-MM-DD HH:mm:ss", "Asia/Kolkata")
+  //       .format("YYYY-MM-DD HH:mm:ss"),
+  //     availability,
+  //     booked,
+  //   };
 
-    try {
-      const response = await axios.put(
-        `${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`,
-        Credentials
-      );
-      setData(response.data);
-      toast.success("Event updated successfully 😊", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
+  //   try {
+  //     const response = await axios.put(
+  //       `${Backendapi.REACT_APP_BACKEND_API_URL}/update-event/${id}`,
+  //       Credentials
+  //     );
+  //     setData(response.data);
+  //     toast.success("Event updated successfully 😊", {
+  //       position: toast.POSITION.TOP_RIGHT,
+  //       autoClose: 2000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
 
-      try {
-        await axios.post(
-          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`
-        );
-        // toast.success("Check your email, event details have been updated");
-      } catch (error) {
-        // toast.error("Unable to send email");
-      }
-    } catch (error) {
-      if (error.response.status === 409) {
-        toast.error("The slot is already booked ☹️");
-      } else {
-        toast.error("The slot is already booked ☹️");
-      }
-      navigate("/Calendar");
-    }
+  //     try {
+  //       await axios.post(
+  //         `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}`
+  //       );
+  //       // toast.success("Check your email, event details have been updated");
+  //     } catch (error) {
+  //       // toast.error("Unable to send email");
+  //     }
+  //   } catch (error) {
+  //     if (error.response.status === 409) {
+  //       toast.error("The slot is already booked ☹️");
+  //     } else {
+  //       toast.error("The slot is already booked ☹️");
+  //     }
+  //     navigate("/Calendar");
+  //   }
 
-    navigate("/Dashboard");
-  };
+  //   navigate("/Dashboard");
+  // };
 
   const handleUpdateMeeting = async (id) => {
     console.log(id, "6655b651bce7e1198c10fc64");
     console.log(title);
     console.log(roomName);
-    console.log(StartTime, "Start time");
-    console.log(EndTime, "End time");
+    console.log(StartTime, "Start time for updating");
+    console.log(EndTime, "End time for updating");
 
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
@@ -474,13 +478,16 @@ export default function (props) {
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
       {
-        title, roomName, StartTime: moment(StartTime)
+        title,
+        roomName,
+        StartTime: moment(StartTime)
           .add(5, "hours")
           .add(30, "minutes")
-          .format("YYYY-MM-DDTHH:mm"), EndTime: moment(EndTime)
-            .add(5, "hours")
-            .add(30, "minutes")
-            .format("YYYY-MM-DDTHH:mm")
+          .format("YYYY-MM-DDTHH:mm"),
+        EndTime: moment(EndTime)
+          .add(5, "hours")
+          .add(30, "minutes")
+          .format("YYYY-MM-DDTHH:mm"),
       }
     );
     if (response.status == 200) {
@@ -530,7 +537,7 @@ export default function (props) {
       setTimeout(() => {
         window.location.reload();
       }, 3000);
-      
+
       // Send deletion confirmation email
       try {
         const eventId = localStorage.getItem("eventid");
@@ -614,7 +621,7 @@ export default function (props) {
                   width: "30%",
                   padding: "10px",
                   marginLeft: " 30px",
-                  marginTop: "5px"
+                  marginTop: "5px",
                 }}
               >
                 <b>Events Info :</b>
@@ -794,7 +801,11 @@ export default function (props) {
                       type="datetime-local"
                       className="form-control"
                       value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
-                      onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      onChange={(e) =>
+                        setStartTime(
+                          moment(e.target.value).format("YYYY-MM-DDTHH:mm")
+                        )
+                      }
                       required
                     />
 
@@ -805,7 +816,11 @@ export default function (props) {
                       type="datetime-local"
                       className="form-control"
                       value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
-                      onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      onChange={(e) =>
+                        setEndTime(
+                          moment(e.target.value).format("YYYY-MM-DDTHH:mm")
+                        )
+                      }
                       required
                     />
                   </div>
@@ -852,17 +867,8 @@ export default function (props) {
               }}
               height="80vh"
               eventDidMount={(info) => {
-                const newT = (moment((info.event.start).toISOString()).tz("Asia/Kolkata").format())
-                console.log(newT, "NewT")
-                const startTime1 = moment.utc(info.event.start)
-              .tz("Asia/Kolkata")
-              .format("YYYY-MM-DDTHH:mm");
-              console.log(startTime1, "Start time for update");
-              console.log(info.event.start, info.event.title)
-            const endTime1 = moment(info.event.extendedProps.EndTime)
-              .tz("Asia/Kolkata")
-              .format("YYYY-MM-DDTHH:mm");
-              // console.log(endTime1, "End time for update");
+                // const newT = (moment((info.event.start).toISOString()).tz("Asia/Kolkata").format())
+                // console.log(newT, "NewT")
                 const startTime = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
@@ -894,26 +900,17 @@ export default function (props) {
               eventClick={(info) => {
                 // console.log("Event clicked:", info.event);
                 // console.log("Event title:", info.event.title);
-                console.log("Event start:", info.event.start);
-                console.log("Event end:", info.event.end);
+                // console.log("Event start:", info.event.start);
+                // console.log("Event end:", info.event.end);
                 // console.log(
                 //   "Extended props:",
                 //   info.event.extendedProps.EndTime
                 // );
                 // console.log("Id", info.event.extendedProps.User._id);
                 // console.log("endtime", info.event.EndTime);
-                console.log("totalEvents", info.event);
+                // console.log("totalEvents", info.event);
                 const currentDateTime = moment().format("YYYY-MM-DDTHH:mm"); // Current date and time
                 console.log(currentDateTime, "Current time");
-                const startTime = moment(info.event.start).tz("Asia/Kolkata").format("YYYY-MM-DDTHH:mm");
-
-                  // .subtract(5, "hours")
-                  // .subtract(30, "minutes")
-                  // .format("YYYY-MM-DDTHH:mm");
-                const endTime = moment(info.event.extendedProps.EndTime)
-                  // .subtract(5, "hours")
-                  // .subtract(30, "minutes")
-                  .format("YYYY-MM-DDTHH:mm");
                 // Now set them in the same format
 
                 // Convert event start time to moment object
@@ -935,15 +932,25 @@ export default function (props) {
                   alert("Editing past events is not allowed.");
                   return;
                 }
-                setStartTime(moment(info.event.start)
+                const startTime2 = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
-                  .format("YYYY-MM-DDTHH:mm"));
-                console.log(startTime, "update time ");
-                setEndTime(moment(info.event.extendedProps.EndTime)
+                  .format("YYYY-MM-DDTHH:mm");
+                const endTime2 = moment(info.event.extendedProps.EndTime)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
-                  .format("YYYY-MM-DDTHH:mm"));
+                  .format("YYYY-MM-DDTHH:mm");
+                setStartTime(startTime2);
+                setEndTime(endTime2);
+                // setStartTime(moment(info.event.start)
+                //   .subtract(5, "hours")
+                //   .subtract(30, "minutes")
+                //   .format("YYYY-MM-DDTHH:mm"));
+                // console.log(startTime, "update time ");
+                // setEndTime(moment(info.event.extendedProps.EndTime)
+                //   .subtract(5, "hours")
+                //   .subtract(30, "minutes")
+                //   .format("YYYY-MM-DDTHH:mm"));
                 setEditShow(true);
                 // setUserMeetingInfo({
                 //   title: info.event.title,
@@ -999,7 +1006,7 @@ export default function (props) {
                         padding: "5px",
                         borderRadius: "4px",
                         border: "1px solid #ccc",
-                        marginLeft: '10px'
+                        marginLeft: "10px",
                       }}
                     />
                   </th>
@@ -1109,9 +1116,9 @@ export default function (props) {
               <div>
                 <div>
                   <div className="form-group">
-                  <lable style={{ color: "black", fontWeight: "bold" }}>
-                    Title
-                  </lable>
+                    <lable style={{ color: "black", fontWeight: "bold" }}>
+                      Title
+                    </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1123,9 +1130,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
-                  <lable style={{ color: "black", fontWeight: "bold" }}>
-                    Room Name
-                  </lable>
+                    <lable style={{ color: "black", fontWeight: "bold" }}>
+                      Room Name
+                    </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1137,9 +1144,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
-                  <lable style={{ color: "black", fontWeight: "bold" }}>
-                    Start Time
-                  </lable>
+                    <lable style={{ color: "black", fontWeight: "bold" }}>
+                      Start Time
+                    </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1151,9 +1158,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
-                  <lable style={{ color: "black", fontWeight: "bold" }}>
-                    End Time
-                  </lable>
+                    <lable style={{ color: "black", fontWeight: "bold" }}>
+                      End Time
+                    </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1380,11 +1387,14 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control pointer-events-none"
-                      value={StartTime}
-                      // value="2024-06-01T06:24"
-                      // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}//moment(StartTime).format("YYYY-MM-DDTHH:mm")2024-06-01T06:24
-                      onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      className="form-control"
+                      value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
+                      // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}
+                      onChange={(e) =>
+                        setStartTime(
+                          moment(e.target.value).format("YYYY-MM-DDTHH:mm")
+                        )
+                      }
                       required
                     />
                     {/* <Datetime
@@ -1409,10 +1419,14 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control pointer-events-none"
-                      value={moment(new Date(EndTime).toISOString()).tz("Asia/Kolkata").format("YYYY-MM-DDTHH:mm")}
+                      className="form-control"
+                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.EndTime).format("YYYY-MM-DDTHH:mm")}
-                      onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
+                      onChange={(e) =>
+                        setEndTime(
+                          moment(e.target.value).format("YYYY-MM-DDTHH:mm")
+                        )
+                      }
                       required
                     />
                     {/* <Datetime
