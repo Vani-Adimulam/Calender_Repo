@@ -75,7 +75,7 @@ export default function DisplayEvents() {
       .catch((error) => {
         console.log(error);
       });
-    window.location.reload();
+    // window.location.reload();
     toast.success("Event Confirmed 😊", {
       position: toast.POSITION.TOP_RIGHT,
       autoClose: 2000,
@@ -85,8 +85,11 @@ export default function DisplayEvents() {
       draggable: true,
       progress: undefined,
     });
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
 
-    toast.success("Accept Mail has been sent")
+    // toast.success("Accept Mail has been sent")
 
   };
 
@@ -109,7 +112,7 @@ export default function DisplayEvents() {
       .catch((error) => {
         console.log(error);
       });
-    window.location.reload();
+    // window.location.reload();
     toast.success("Event is Rejected", {
       position: toast.POSITION.TOP_RIGHT,
       autoClose: 2000,
@@ -119,7 +122,10 @@ export default function DisplayEvents() {
       draggable: true,
       progress: undefined,
     });
-    toast.success("Reject Mail has been sent")
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+    // toast.success("Reject Mail has been sent")
 
 
   };
@@ -133,7 +139,7 @@ export default function DisplayEvents() {
           {item.status === '𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝' && (
             <>
               <button
-                className="btn btn-success"
+                className="btn btn-success mr-2"
                 onClick={() => handleAccept(item._id, item.User.username, item.title, item.User.email)}
               >
                 Accept
@@ -191,7 +197,7 @@ export default function DisplayEvents() {
     <div>
       <NavbarOne />
       <div className="row">
-        <div className="mt-5 mb-4 d-flex justify-content-center">
+        <div className="mt-3 mb-2 d-flex justify-content-center">
           <h2>𝐁𝐨𝐨𝐤𝐞𝐝 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
         </div>
       </div>
@@ -207,19 +213,19 @@ export default function DisplayEvents() {
                     value={searchTitle}
                     onChange={(e) => setSearchTitle(e.target.value)}
                     placeholder="Search Title"
-                    style={{ width: '100px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    style={{ marginLeft:'10px', width: '100px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
                 </th>
                 <th className='text-black'>Room Name</th>
                 <th className='text-black'>StartTime</th>
                 <th className='text-black'>EndTime</th>
-                <th className='text-black'>Event BookedBy
+                <th className='text-black'>Booked By
                   <input
                     type="text"
                     value={searchBookedBy}
                     onChange={(e) => setSearchBookedBy(e.target.value)}
                     placeholder="Search Name"
-                    style={{ width: '110px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    style={{marginLeft:'5px', width: '110px', height: '22px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
                 </th>
                 <th className='text-black'>Status</th>

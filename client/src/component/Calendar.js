@@ -34,9 +34,9 @@ export default function (props) {
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
   const [StartTime, setStartTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
-  console.log(StartTime,"StartTime", "Actual time");
+  // console.log(StartTime,"StartTime", "Actual time");
   const [EndTime, setEndTime] = useState(moment(new Date().toISOString()).tz("Asia/Kolkata").format());
-  console.log(EndTime, "End time");
+  // console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
@@ -56,7 +56,7 @@ export default function (props) {
   const userid = objectId.replace(/^"(.*)"$/, "$1");
   const [User, setUser] = useState(userid);
   const [eventid, setEventid] = useState();
-
+  const popoverRef = useRef({});
   const [Data, setData] = useState([]); // store the post data
   const [eventData, setEventData] = useState([]); // store the Display data
   const [RowData, setRowData] = useState([]);
@@ -490,7 +490,10 @@ export default function (props) {
         draggable: true,
         progress: undefined,
       });
-
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+      
       // Send deletion confirmation email
       try {
         const eventId = localStorage.getItem("eventid");
@@ -501,15 +504,16 @@ export default function (props) {
         await axios.post(
           `${Backendapi.REACT_APP_BACKEND_API_URL}/send/deletionSuperUser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${mailTitle}`
         );
-        toast.success("Deletion confirmation email sent");
+        // toast.success("Deletion confirmation email sent");
       } catch (error) {
-        toast.error("Unable to send deletion confirmation email");
+        // toast.error("Unable to send deletion confirmation email");
+        window.location.reload();
       }
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.log(error);
     }
-    window.location.reload();
+    // window.location.reload();
     // navigate("/Dashboard");
   };
 
@@ -573,7 +577,7 @@ export default function (props) {
                   width: "30%",
                   padding: "10px",
                   marginLeft:" 30px",
-                  marginTop:"15px"
+                  marginTop:"5px"
                 }}
               > 
               <b>Events Info :</b> 
@@ -811,6 +815,17 @@ export default function (props) {
               }}
               height="80vh"
               eventDidMount={(info) => {
+                const newT = (moment((info.event.start).toISOString()).tz("Asia/Kolkata").format())
+                console.log(newT, "NewT")
+                const startTime1 = moment.utc(info.event.start)
+              .tz("Asia/Kolkata")
+              .format("YYYY-MM-DDTHH:mm");
+              console.log(startTime1, "Start time for update");
+              console.log(info.event.start, info.event.title)
+            const endTime1 = moment(info.event.extendedProps.EndTime)
+              .tz("Asia/Kolkata")
+              .format("YYYY-MM-DDTHH:mm");
+              // console.log(endTime1, "End time for update");
                 const startTime = moment(info.event.start)
                 .subtract(5, "hours")
                 .subtract(30, "minutes")
@@ -842,8 +857,8 @@ export default function (props) {
               eventClick={(info) => {
                 // console.log("Event clicked:", info.event);
                 // console.log("Event title:", info.event.title);
-                // console.log("Event start:", info.event.start);
-                // console.log("Event end:", info.event.end);
+                console.log("Event start:", info.event.start);
+                console.log("Event end:", info.event.end);
                 // console.log(
                 //   "Extended props:",
                 //   info.event.extendedProps.EndTime
@@ -853,16 +868,15 @@ export default function (props) {
                 console.log("totalEvents", info.event);
                 const currentDateTime = moment().format("YYYY-MM-DDTHH:mm"); // Current date and time
                 console.log(currentDateTime, "Current time");
-                const startTime = moment(info.event.start)
+                const startTime = moment(info.event.start).tz("Asia/Kolkata").format("YYYY-MM-DDTHH:mm");
+
                   // .subtract(5, "hours")
                   // .subtract(30, "minutes")
-                  .format("YYYY-MM-DDTHH:mm");
-                console.log(StartTime, "Start time");
+                  // .format("YYYY-MM-DDTHH:mm");
                 const endTime = moment(info.event.extendedProps.EndTime)
                   // .subtract(5, "hours")
                   // .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
-                console.log(EndTime);
                 // Now set them in the same format
 
                 // Convert event start time to moment object
@@ -917,7 +931,7 @@ export default function (props) {
         </section>
 
         <div className="row">
-          <div className="mt-5 mb-4">
+          <div className="mt-3 mb-2">
             <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
           </div>
         </div>
@@ -941,6 +955,7 @@ export default function (props) {
                         padding: "5px",
                         borderRadius: "4px",
                         border: "1px solid #ccc",
+                        marginLeft: '10px'
                       }}
                     />
                   </th>
@@ -1050,6 +1065,9 @@ export default function (props) {
               <div>
                 <div>
                   <div className="form-group">
+                  <lable style={{ color: "black", fontWeight: "bold" }}>
+                    Title
+                  </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1061,6 +1079,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
+                  <lable style={{ color: "black", fontWeight: "bold" }}>
+                    Room Name
+                  </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1072,6 +1093,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
+                  <lable style={{ color: "black", fontWeight: "bold" }}>
+                    Start Time
+                  </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1083,6 +1107,9 @@ export default function (props) {
                 </div>
                 <div>
                   <div className="form-group mt-3">
+                  <lable style={{ color: "black", fontWeight: "bold" }}>
+                    End Time
+                  </lable>
                     <input
                       type="text"
                       className="form-control"
@@ -1309,7 +1336,7 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control"
+                      className="form-control pointer-events-none"
                       value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) => setStartTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
@@ -1337,7 +1364,7 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control"
+                      className="form-control pointer-events-none"
                       value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.EndTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) => setEndTime(moment(e.target.value).format("YYYY-MM-DDTHH:mm"))}
