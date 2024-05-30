@@ -1387,7 +1387,7 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control"
+                      className="form-control pointer-events-none"
                       value={moment(StartTime).format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.StartTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) =>
@@ -1419,7 +1419,7 @@ export default function (props) {
                     </label>
                     <input
                       type="datetime-local"
-                      className="form-control"
+                      className="form-control pointer-events-none"
                       value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
                       // defaultValue={moment(RowData.EndTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) =>
