@@ -311,7 +311,11 @@ export default function (props) {
           // console.log(date2)
           // console.log(date1 > date2, "Checking", item.title);
           if (date1 > date2) {
-            colorClass = "event-gray";
+            if (item.availability && !item.booked) {
+            colorClass = "event-peach";
+            } else {
+              colorClass = "event-gray";
+            }
           } else {
             if (item.availability && !item.booked) {
               colorClass = "event-yellow"; // Condition 1: Availability is true and not booked
@@ -479,7 +483,8 @@ export default function (props) {
       }, 4000);
       return;
     }
-    setAvailability(title === "Available" ? true : false)
+    setAvailability(title === "Available" ? true : false);
+    setBooked(title !== "Available" ? true : false);
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
       {
@@ -495,8 +500,7 @@ export default function (props) {
           .add(5, "hours")
           .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
-      },
-
+      }
     );
     if (response.status == 200) {
       toast.success("Event Updated Successfully");
@@ -604,7 +608,8 @@ export default function (props) {
     return utcDateTime;
   };
 
-  const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false
+  const superUserCondition =
+    JSON.parse(localStorage.getItem("isSuperUser")) || false;
   console.log(superUserCondition, "Super user condition");
   return (
     <div>
@@ -614,7 +619,7 @@ export default function (props) {
         <div className="">
           <>
             <div className="d-flex flex-row">
-              {superUserCondition &&
+              {superUserCondition && (
                 <Button
                   className="text-black mt-2 "
                   style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
@@ -624,17 +629,18 @@ export default function (props) {
                     <i className="fa fa-plu">Schedule Meeting</i>
                   </span>
                 </Button>
-              }
+              )}
 
               <div
                 style={{
                   // border: "2px solid #ccc",
                   display: "flex",
-                  justifyContent: "space-between",
-                  width: "30%",
+                  justifyContent: "space-between ",
+                  width: "%",
                   padding: "10px",
-                  marginLeft: " 30px",
+                  marginLeft: "5px",
                   marginTop: "5px",
+                  gap: "15px"
                 }}
               >
                 <b>Events Info :</b>
@@ -645,10 +651,22 @@ export default function (props) {
                       height: "15px",
                       borderRadius: "50%",
                       backgroundColor: "#bdcdd8",
-                      marginRight: "5px",
+                      marginRight: "3px",
                     }}
                   ></div>
-                  <span>Completed</span>
+                  <span>Past Scheduled</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "50%",
+                      backgroundColor: "peachpuff",
+                      marginRight: "3px",
+                    }}
+                  ></div>
+                  <span>Past Availability</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div
@@ -657,7 +675,7 @@ export default function (props) {
                       height: "15px",
                       borderRadius: "50%",
                       backgroundColor: "#50C878",
-                      marginRight: "5px",
+                      marginRight: "3px",
                     }}
                   ></div>
                   <span>Available</span>
@@ -669,10 +687,10 @@ export default function (props) {
                       height: "15px",
                       borderRadius: "50%",
                       backgroundColor: "#73c2fb",
-                      marginRight: "5px",
+                      marginRight: "3px",
                     }}
                   ></div>
-                  <span>Booked</span>
+                  <span>Scheduled</span>
                 </div>
               </div>
             </div>
@@ -751,7 +769,7 @@ export default function (props) {
                           checked={availability === false && booked === true}
                           required
                         />
-                        Book
+                        Schedule Meeting
                       </label>
                     </div>
                   </div>
@@ -828,7 +846,7 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
+                      value={moment(EndTime).add(1, 'hours').format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) =>
                         setEndTime(
                           moment(e.target.value).format("YYYY-MM-DDTHH:mm")
@@ -878,17 +896,19 @@ export default function (props) {
                 end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek", // will normally be on the right. if RTL, will be on the left
                 eventColor: "#378006",
               }}
-
               height="80vh"
               eventDidMount={(info) => {
                 const startTime = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
+                const stat = info.event.extendedProps.availability;
+                console.log(stat, "Stat");
                 const endTime = moment(info.event.extendedProps.EndTime)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
+
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
@@ -897,11 +917,35 @@ export default function (props) {
 
                   content: `
                     <strong>Title:</strong>${info.event.title}</span><br>
-                    <strong>Room Name:</strong> ${info.event.extendedProps.roomName}<br>
-                    <strong>Username:</strong> ${info.event.extendedProps.username}<br>
-                    <strong>Meeting:</strong> ${info.event.extendedProps.status}<br>
-                    <strong>Event Start:</strong> ${startTime}<br>
-                    <strong>Event End:</strong> ${endTime}<br>
+                    <strong>Room Name:</strong> ${
+                      info.event.extendedProps.roomName
+                    }<br>
+                    <strong>Username:</strong> ${
+                      info.event.extendedProps.username
+                    }<br>
+                    <strong>Meeting:</strong> ${
+                      info.event.extendedProps.username
+                    }<br>
+                    <strong>Event Start:</strong> ${new Date(
+                      startTime
+                    ).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })}<br>
+                    <strong>Event End:</strong> ${new Date(
+                      endTime
+                    ).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })}<br>
                   `,
                   html: true,
                 });
@@ -910,9 +954,12 @@ export default function (props) {
                 return info.event.extendedProps.colorClass;
               }}
               eventClick={(info) => {
-                console.log(info.event)
-                console.log("Event clicked:", info.event.extendedProps.availability);
-                console.log("Booked", info.event.extendedProps.booked)
+                console.log(info.event);
+                console.log(
+                  "Event clicked:",
+                  info.event.extendedProps.availability
+                );
+                // console.log("Booked", info.event.extendedProps.booked);
 
                 // console.log("Event title:", info.event.title);
                 // console.log("Event start:", info.event.start);
@@ -944,7 +991,8 @@ export default function (props) {
                 // console.log(date6);
                 // console.log(date1 > date2, "Checking", item.title);
                 if (date5 > date6) {
-                  superUserCondition && alert("Editing past events is not allowed.");
+                  superUserCondition &&
+                    alert("Editing past events is not allowed.");
                   return;
                 }
                 const startTime2 = moment(info.event.start)
@@ -998,127 +1046,131 @@ export default function (props) {
         </section>
 
         {/* for user events : */}
-        { false && <div>
-          <div className="row">
-            <div className="mt-3 mb-2">
-              <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
+        {false && (
+          <div>
+            <div className="row">
+              <div className="mt-3 mb-2">
+                <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
+              </div>
             </div>
-          </div>
 
-          {/* User Data Table View  */}
-          <div className="row">
-            <div className="table-responsive">
-              <table className="table table-striped table-hover table-bordered">
-                <thead className="bg-info text-white">
-                  <tr>
-                    <th className="text-black">
-                      Title
-                      <input
-                        type="text"
-                        value={filterTitle}
-                        onChange={(e) => setFilterTitle(e.target.value)}
-                        placeholder="Search Title"
-                        style={{
-                          width: "100px",
-                          height: "22px",
-                          padding: "5px",
-                          borderRadius: "4px",
-                          border: "1px solid #ccc",
-                          marginLeft: "10px",
-                        }}
-                      />
-                    </th>
-                    <th className="text-black">Room Name</th>
-                    <th className="text-black">StartTime</th>
-                    <th className="text-black">EndTime</th>
-                    <th className="text-black">Status</th>
-                    <th className="text-black">Actions</th>
-                  </tr>
-                </thead>
+            {/* User Data Table View  */}
+            <div className="row">
+              <div className="table-responsive">
+                <table className="table table-striped table-hover table-bordered">
+                  <thead className="bg-info text-white">
+                    <tr>
+                      <th className="text-black">
+                        Title
+                        <input
+                          type="text"
+                          value={filterTitle}
+                          onChange={(e) => setFilterTitle(e.target.value)}
+                          placeholder="Search Title"
+                          style={{
+                            width: "100px",
+                            height: "22px",
+                            padding: "5px",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc",
+                            marginLeft: "10px",
+                          }}
+                        />
+                      </th>
+                      <th className="text-black">Room Name</th>
+                      <th className="text-black">StartTime</th>
+                      <th className="text-black">EndTime</th>
+                      <th className="text-black">Status</th>
+                      <th className="text-black">Actions</th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  {sortedEventData
-                    .filter((item) =>
-                      item.title.toLowerCase().includes(filterTitle.toLowerCase())
-                    )
-                    .slice(
-                      (currentPage - 1) * itemsPerPage,
-                      currentPage * itemsPerPage
-                    )
-                    .map((item) => (
-                      <tr key={item._id}>
-                        <td>{item.title}</td>
-                        <td>{item.roomName}</td>
-                        <td>
-                          {item.StartTime.split("T").join(" ⋆ ").slice(0, -5)}
-                          <span className="clock-animation"></span>
-                        </td>
-                        <td>
-                          {item.EndTime.split("T").join(" ⋆ ").slice(0, -5)}
-                          <span className="clock-animation"></span>
-                        </td>
-                        <td>{item.status}</td>
-                        <td style={{ minWidth: 190 }}>
-                          <Button
-                            size="sm"
-                            varient="danger"
-                            style={{ backgroundColor: "Red" }}
-                            onClick={() => {
-                              handleViewShow(
-                                setRowData(item),
-                                setId(item._id),
-                                setDelete(true)
-                              );
-                            }}
-                          >
-                            Cancel Meeting
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "10px",
-              }}
-            >
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
+                  <tbody>
+                    {sortedEventData
+                      .filter((item) =>
+                        item.title
+                          .toLowerCase()
+                          .includes(filterTitle.toLowerCase())
+                      )
+                      .slice(
+                        (currentPage - 1) * itemsPerPage,
+                        currentPage * itemsPerPage
+                      )
+                      .map((item) => (
+                        <tr key={item._id}>
+                          <td>{item.title}</td>
+                          <td>{item.roomName}</td>
+                          <td>
+                            {item.StartTime.split("T").join(" ⋆ ").slice(0, -5)}
+                            <span className="clock-animation"></span>
+                          </td>
+                          <td>
+                            {item.EndTime.split("T").join(" ⋆ ").slice(0, -5)}
+                            <span className="clock-animation"></span>
+                          </td>
+                          <td>{item.status}</td>
+                          <td style={{ minWidth: 190 }}>
+                            <Button
+                              size="sm"
+                              varient="danger"
+                              style={{ backgroundColor: "Red" }}
+                              onClick={() => {
+                                handleViewShow(
+                                  setRowData(item),
+                                  setId(item._id),
+                                  setDelete(true)
+                                );
+                              }}
+                            >
+                              Cancel Meeting
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              <div
                 style={{
-                  fontSize: "14px",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  backgroundColor: "transparent",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "10px",
                 }}
               >
-                &lt; 𝗣𝗿𝗲𝘃𝗶𝗼𝘂𝘀 𝗣𝗮𝗴𝗲
-              </button>
-              <span style={{ fontSize: "14px" }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                style={{
-                  fontSize: "14px",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  backgroundColor: "transparent",
-                  cursor: "pointer",
-                }}
-              >
-                𝗡𝗲𝘅𝘁 𝗣𝗮𝗴𝗲 &gt;
-              </button>
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  style={{
+                    fontSize: "14px",
+                    padding: "5px 10px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  &lt; 𝗣𝗿𝗲𝘃𝗶𝗼𝘂𝘀 𝗣𝗮𝗴𝗲
+                </button>
+                <span style={{ fontSize: "14px" }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  style={{
+                    fontSize: "14px",
+                    padding: "5px 10px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  𝗡𝗲𝘅𝘁 𝗣𝗮𝗴𝗲 &gt;
+                </button>
+              </div>
             </div>
           </div>
-        </div>}
+        )}
 
         {/* create modal for view data */}
         <div className="model-box-view">
@@ -1331,7 +1383,7 @@ export default function (props) {
                         value="available"
                         style={{ marginRight: "5px" }}
                         onChange={handleAvailabilityChange}
-                        checked={availability === true && booked === false}
+                        checked={title === "Available"}
                         required
                       />
                       <span style={{ color: "" }}>Available</span>
@@ -1343,10 +1395,10 @@ export default function (props) {
                         value="book"
                         style={{ marginRight: "5px" }}
                         onChange={handleAvailabilityChange}
-                        checked={availability === false && booked === true}
+                        checked={title !== "Available"}
                         required
                       />
-                      Book
+                      Schedule Meeting
                     </label>
                   </div>
                 </div>
@@ -1360,7 +1412,7 @@ export default function (props) {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     defaultValue={title}
-                    disabled={availability === true}
+                    disabled={title === "Available"}
                     style={{
                       width: "100%",
                       padding: "8px",
@@ -1512,7 +1564,6 @@ export default function (props) {
               </form>
             </Modal.Body>
             <Modal.Footer>
-
               <Button
                 variant="secondary"
                 className="text-black"

@@ -71,7 +71,7 @@ function Login() {
         if (res.data.user.isSuperUser) {
           setSuperUserEmail(res.data.user.email);
           console.log(res.data.user.email);
-          navigate("/DispalyEvents");
+          navigate("/Calendar");
         } else {
           navigate("/Calendar");
         }
