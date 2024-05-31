@@ -479,13 +479,13 @@ export default function (props) {
       }, 4000);
       return;
     }
-    setAvailability(title==="Available"? true: false)
+    setAvailability(title === "Available" ? true : false)
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
       {
         title,
         roomName,
-        availability ,
+        availability,
         booked,
         StartTime: moment(StartTime)
           .add(5, "hours")
@@ -496,7 +496,7 @@ export default function (props) {
           .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
       },
-     
+
     );
     if (response.status == 200) {
       toast.success("Event Updated Successfully");
@@ -605,7 +605,7 @@ export default function (props) {
   };
 
   const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false
-  console.log(superUserCondition,"Super user condition");
+  console.log(superUserCondition, "Super user condition");
   return (
     <div>
       <NavbarCalendar />
@@ -614,7 +614,7 @@ export default function (props) {
         <div className="">
           <>
             <div className="d-flex flex-row">
-              { superUserCondition && 
+              {superUserCondition &&
                 <Button
                   className="text-black mt-2 "
                   style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
@@ -625,7 +625,7 @@ export default function (props) {
                   </span>
                 </Button>
               }
-             
+
               <div
                 style={{
                   // border: "2px solid #ccc",
@@ -878,7 +878,7 @@ export default function (props) {
                 end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek", // will normally be on the right. if RTL, will be on the left
                 eventColor: "#378006",
               }}
-              
+
               height="80vh"
               eventDidMount={(info) => {
                 const startTime = moment(info.event.start)
@@ -997,125 +997,128 @@ export default function (props) {
           </div>
         </section>
 
-        <div className="row">
-          <div className="mt-3 mb-2">
-            <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
+        {/* for user events : */}
+        { false && <div>
+          <div className="row">
+            <div className="mt-3 mb-2">
+              <h2 className="text-center">𝐘𝐨𝐮𝐫 𝐄𝐯𝐞𝐧𝐭𝐬</h2>
+            </div>
           </div>
-        </div>
 
-        {/* User Data Table View  */}
-        <div className="row">
-          <div className="table-responsive">
-            <table className="table table-striped table-hover table-bordered">
-              <thead className="bg-info text-white">
-                <tr>
-                  <th className="text-black">
-                    Title
-                    <input
-                      type="text"
-                      value={filterTitle}
-                      onChange={(e) => setFilterTitle(e.target.value)}
-                      placeholder="Search Title"
-                      style={{
-                        width: "100px",
-                        height: "22px",
-                        padding: "5px",
-                        borderRadius: "4px",
-                        border: "1px solid #ccc",
-                        marginLeft: "10px",
-                      }}
-                    />
-                  </th>
-                  <th className="text-black">Room Name</th>
-                  <th className="text-black">StartTime</th>
-                  <th className="text-black">EndTime</th>
-                  <th className="text-black">Status</th>
-                  <th className="text-black">Actions</th>
-                </tr>
-              </thead>
+          {/* User Data Table View  */}
+          <div className="row">
+            <div className="table-responsive">
+              <table className="table table-striped table-hover table-bordered">
+                <thead className="bg-info text-white">
+                  <tr>
+                    <th className="text-black">
+                      Title
+                      <input
+                        type="text"
+                        value={filterTitle}
+                        onChange={(e) => setFilterTitle(e.target.value)}
+                        placeholder="Search Title"
+                        style={{
+                          width: "100px",
+                          height: "22px",
+                          padding: "5px",
+                          borderRadius: "4px",
+                          border: "1px solid #ccc",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </th>
+                    <th className="text-black">Room Name</th>
+                    <th className="text-black">StartTime</th>
+                    <th className="text-black">EndTime</th>
+                    <th className="text-black">Status</th>
+                    <th className="text-black">Actions</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {sortedEventData
-                  .filter((item) =>
-                    item.title.toLowerCase().includes(filterTitle.toLowerCase())
-                  )
-                  .slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )
-                  .map((item) => (
-                    <tr key={item._id}>
-                      <td>{item.title}</td>
-                      <td>{item.roomName}</td>
-                      <td>
-                        {item.StartTime.split("T").join(" ⋆ ").slice(0, -5)}
-                        <span className="clock-animation"></span>
-                      </td>
-                      <td>
-                        {item.EndTime.split("T").join(" ⋆ ").slice(0, -5)}
-                        <span className="clock-animation"></span>
-                      </td>
-                      <td>{item.status}</td>
-                      <td style={{ minWidth: 190 }}>
-                        <Button
-                          size="sm"
-                          varient="danger"
-                          style={{ backgroundColor: "Red" }}
-                          onClick={() => {
-                            handleViewShow(
-                              setRowData(item),
-                              setId(item._id),
-                              setDelete(true)
-                            );
-                          }}
-                        >
-                          Cancel Meeting
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "10px",
-            }}
-          >
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
+                <tbody>
+                  {sortedEventData
+                    .filter((item) =>
+                      item.title.toLowerCase().includes(filterTitle.toLowerCase())
+                    )
+                    .slice(
+                      (currentPage - 1) * itemsPerPage,
+                      currentPage * itemsPerPage
+                    )
+                    .map((item) => (
+                      <tr key={item._id}>
+                        <td>{item.title}</td>
+                        <td>{item.roomName}</td>
+                        <td>
+                          {item.StartTime.split("T").join(" ⋆ ").slice(0, -5)}
+                          <span className="clock-animation"></span>
+                        </td>
+                        <td>
+                          {item.EndTime.split("T").join(" ⋆ ").slice(0, -5)}
+                          <span className="clock-animation"></span>
+                        </td>
+                        <td>{item.status}</td>
+                        <td style={{ minWidth: 190 }}>
+                          <Button
+                            size="sm"
+                            varient="danger"
+                            style={{ backgroundColor: "Red" }}
+                            onClick={() => {
+                              handleViewShow(
+                                setRowData(item),
+                                setId(item._id),
+                                setDelete(true)
+                              );
+                            }}
+                          >
+                            Cancel Meeting
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            <div
               style={{
-                fontSize: "14px",
-                padding: "5px 10px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                backgroundColor: "transparent",
-                cursor: "pointer",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "10px",
               }}
             >
-              &lt; 𝗣𝗿𝗲𝘃𝗶𝗼𝘂𝘀 𝗣𝗮𝗴𝗲
-            </button>
-            <span style={{ fontSize: "14px" }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              style={{
-                fontSize: "14px",
-                padding: "5px 10px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                backgroundColor: "transparent",
-                cursor: "pointer",
-              }}
-            >
-              𝗡𝗲𝘅𝘁 𝗣𝗮𝗴𝗲 &gt;
-            </button>
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                style={{
+                  fontSize: "14px",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  backgroundColor: "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                &lt; 𝗣𝗿𝗲𝘃𝗶𝗼𝘂𝘀 𝗣𝗮𝗴𝗲
+              </button>
+              <span style={{ fontSize: "14px" }}>𝗣𝗮𝗴𝗲 {currentPage}</span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                style={{
+                  fontSize: "14px",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  backgroundColor: "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                𝗡𝗲𝘅𝘁 𝗣𝗮𝗴𝗲 &gt;
+              </button>
+            </div>
           </div>
-        </div>
+        </div>}
 
         {/* create modal for view data */}
         <div className="model-box-view">
@@ -1499,13 +1502,13 @@ export default function (props) {
                   Update
                 </Button>
                 <Button
-                type="submit"
-                style={{ backgroundColor: "red" }}
-                className="btn btn-danger ml-2 mt-4"
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
+                  type="submit"
+                  style={{ backgroundColor: "red" }}
+                  className="btn btn-danger ml-2 mt-4"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
               </form>
             </Modal.Body>
             <Modal.Footer>
