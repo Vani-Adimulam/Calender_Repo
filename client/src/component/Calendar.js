@@ -1325,6 +1325,7 @@ export default function (props) {
                     Select Room
                   </span>
                   <select
+                    className="pointer-events-none"
                     value={roomName}
                     onChange={(e) => setroomName(e.target.value)}
                     defaultValue={RowData.roomName}
