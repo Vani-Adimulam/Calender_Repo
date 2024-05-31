@@ -142,7 +142,7 @@ app.get("/", (req, res) => {
 // working
 app.put("/update/title/:id", async (req, res) => {
   const { id } = req.params;
-  const {title, roomName, StartTime, EndTime} = req.body
+  const {title, roomName, StartTime, EndTime, availability, booked} = req.body
   
   console.log(req.params);
   try {
@@ -175,8 +175,9 @@ app.put("/update/title/:id", async (req, res) => {
     const existingSameEvent = await Event.findOne({
       _id: { $ne: id }, // Skip the event with the provided id
       roomName,
-      booked:true,
-      availability:false,
+      booked,
+      availability,
+      booked,
       StartTime: { $lte: StartTime },
       EndTime: { $gte: EndTime },
     });
@@ -189,8 +190,8 @@ app.put("/update/title/:id", async (req, res) => {
           roomName,
           StartTime,
           EndTime,
-          availability: false,
-          booked: true,
+          availability,
+          booked,
         },
         { new: true }
       );

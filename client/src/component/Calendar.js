@@ -63,6 +63,7 @@ export default function (props) {
   const popoverRef = useRef({});
   const [Data, setData] = useState([]); // store the post data
   const [eventData, setEventData] = useState([]); // store the Display data
+  // console.log(eventData)
   const [RowData, setRowData] = useState([]);
   const [ViewShow, setViewShow] = useState(false);
   const handleViewShow = () => {
@@ -210,18 +211,19 @@ export default function (props) {
   };
 
   //display user details
-  useEffect(() => {
-    axios
-      .get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
-      .then((d) => {
-        const cdata = d.data;
-        setData(cdata);
-        // console.log(cdata)
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/getusers/${User}`)
+  //     .then((d) => {
+  //       const cdata = d.data;
+  //       setData(cdata);
+  //       // console.log(cdata)
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+
+  //     });
+  // }, []);
 
   const sortByStartTime = (a, b) => {
     const startTimeA = new Date(a.StartTime);
@@ -335,6 +337,8 @@ export default function (props) {
             username: item.User.username,
             title: item.title,
             roomName: item.roomName,
+            availability,
+            booked,
             date: item.StartTime,
             EndTime: item.EndTime,
             User: item.User,
@@ -450,10 +454,10 @@ export default function (props) {
 
   const handleUpdateMeeting = async (id) => {
     console.log(id, "6655b651bce7e1198c10fc64");
-    console.log(title);
-    console.log(roomName);
-    console.log(StartTime, "Start time for updating");
-    console.log(EndTime, "End time for updating");
+    // console.log(title);
+    // // console.log(roomName);
+    // console.log(StartTime, "Start time for updating");
+    // console.log(EndTime, "End time for updating");
 
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
@@ -474,12 +478,14 @@ export default function (props) {
       }, 4000);
       return;
     }
-
+    setAvailability(title==="Available"? true: false)
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
       {
         title,
         roomName,
+        availability ,
+        booked,
         StartTime: moment(StartTime)
           .add(5, "hours")
           .add(30, "minutes")
@@ -488,7 +494,8 @@ export default function (props) {
           .add(5, "hours")
           .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
-      }
+      },
+     
     );
     if (response.status == 200) {
       toast.success("Event Updated Successfully");
@@ -605,20 +612,16 @@ export default function (props) {
         {/* UserInput Form */}
         <div className="">
           <>
-            <div class="d-flex flex-row">
-              {
-                superUserCondition && <Button
-                  className="text-black mt-2 "
-                  style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
-                  onClick={handleOpenModal}
-                >
-                  <span style={{ color: "white", fontWeight: "bold" }}>
-                    <i className="fa fa-plu">Schedule Meeting</i>
-                  </span>
-                </Button>
-              }
-              
-
+            <div className="d-flex flex-row">
+              <Button
+                className="text-black mt-2 "
+                style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
+                onClick={handleOpenModal}
+              >
+                <span style={{ color: "white", fontWeight: "bold" }}>
+                  <i className="fa fa-plu">Schedule Meeting</i>
+                </span>
+              </Button>
               <div
                 style={{
                   // border: "2px solid #ccc",
@@ -871,10 +874,9 @@ export default function (props) {
                 end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek", // will normally be on the right. if RTL, will be on the left
                 eventColor: "#378006",
               }}
+              
               height="80vh"
               eventDidMount={(info) => {
-                // const newT = (moment((info.event.start).toISOString()).tz("Asia/Kolkata").format())
-                // console.log(newT, "NewT")
                 const startTime = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
@@ -904,7 +906,10 @@ export default function (props) {
                 return info.event.extendedProps.colorClass;
               }}
               eventClick={(info) => {
-                // console.log("Event clicked:", info.event);
+                console.log(info.event)
+                console.log("Event clicked:", info.event.extendedProps.availability);
+                console.log("Booked", info.event.extendedProps.booked)
+
                 // console.log("Event title:", info.event.title);
                 // console.log("Event start:", info.event.start);
                 // console.log("Event end:", info.event.end);
@@ -916,7 +921,7 @@ export default function (props) {
                 // console.log("endtime", info.event.EndTime);
                 // console.log("totalEvents", info.event);
                 const currentDateTime = moment().format("YYYY-MM-DDTHH:mm"); // Current date and time
-                console.log(currentDateTime, "Current time");
+                // console.log(currentDateTime, "Current time");
                 // Now set them in the same format
 
                 // Convert event start time to moment object
@@ -927,12 +932,12 @@ export default function (props) {
                 //   return; // Exit the function, preventing the modal from opening
                 // }
                 const date5 = moment(new Date()).format();
-                console.log(date5);
+                // console.log(date5);
                 const date6 = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
-                console.log(date6);
+                // console.log(date6);
                 // console.log(date1 > date2, "Checking", item.title);
                 if (date5 > date6) {
                   alert("Editing past events is not allowed.");
@@ -1297,7 +1302,7 @@ export default function (props) {
             keyboard={false}
           >
             <Modal.Header closeButton>
-              <Modal.Title>Update Your Meeting</Modal.Title>
+              <Modal.Title>Update Meeting</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <form
@@ -1307,6 +1312,37 @@ export default function (props) {
                   handleUpdateMeeting(id);
                 }}
               >
+                <div style={{ margin: "15px 0" }}>
+                  <span style={{ color: "black", fontWeight: "bold" }}>
+                    Availability
+                  </span>
+                  <div>
+                    <label style={{ marginRight: "10px" }}>
+                      <input
+                        type="radio"
+                        name="availability"
+                        value="available"
+                        style={{ marginRight: "5px" }}
+                        onChange={handleAvailabilityChange}
+                        checked={availability === true && booked === false}
+                        required
+                      />
+                      <span style={{ color: "" }}>Available</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="availability"
+                        value="book"
+                        style={{ marginRight: "5px" }}
+                        onChange={handleAvailabilityChange}
+                        checked={availability === false && booked === true}
+                        required
+                      />
+                      Book
+                    </label>
+                  </div>
+                </div>
                 <div className="form-group">
                   <lable style={{ color: "black", fontWeight: "bold" }}>
                     Title
@@ -1317,6 +1353,7 @@ export default function (props) {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     defaultValue={title}
+                    disabled={availability === true}
                     style={{
                       width: "100%",
                       padding: "8px",
@@ -1457,9 +1494,18 @@ export default function (props) {
                 >
                   Update
                 </Button>
+                <Button
+                type="submit"
+                style={{ backgroundColor: "red" }}
+                className="btn btn-danger ml-2 mt-4"
+                onClick={handleDelete}
+              >
+                Delete
+              </Button>
               </form>
             </Modal.Body>
             <Modal.Footer>
+
               <Button
                 variant="secondary"
                 className="text-black"
