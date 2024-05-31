@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Backendapi from "../Backendapi";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
+import SuperUserDashboard from "../SuperUser/SuperUserDashboard";
 
 export default function (props) {
   // localStorage.getItem("email").split("@")[0]
@@ -604,7 +605,7 @@ export default function (props) {
   };
 
   const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false
-
+  console.log(superUserCondition,"Super user condition");
   return (
     <div>
       <NavbarCalendar />
@@ -613,15 +614,18 @@ export default function (props) {
         <div className="">
           <>
             <div className="d-flex flex-row">
-              <Button
-                className="text-black mt-2 "
-                style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
-                onClick={handleOpenModal}
-              >
-                <span style={{ color: "white", fontWeight: "bold" }}>
-                  <i className="fa fa-plu">Schedule Meeting</i>
-                </span>
-              </Button>
+              { superUserCondition && 
+                <Button
+                  className="text-black mt-2 "
+                  style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
+                  onClick={handleOpenModal}
+                >
+                  <span style={{ color: "white", fontWeight: "bold" }}>
+                    <i className="fa fa-plu">Schedule Meeting</i>
+                  </span>
+                </Button>
+              }
+             
               <div
                 style={{
                   // border: "2px solid #ccc",
@@ -940,7 +944,7 @@ export default function (props) {
                 // console.log(date6);
                 // console.log(date1 > date2, "Checking", item.title);
                 if (date5 > date6) {
-                  alert("Editing past events is not allowed.");
+                  superUserCondition && alert("Editing past events is not allowed.");
                   return;
                 }
                 const startTime2 = moment(info.event.start)

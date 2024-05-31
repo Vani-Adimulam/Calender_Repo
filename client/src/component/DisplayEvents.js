@@ -15,10 +15,10 @@ export default function DisplayEvents() {
   const [searchBookedBy, setSearchBookedBy] = useState('');
   const [searchStatus, setSearchStatus] = useState('');
   const [username, setuserName] = useState(JSON.parse(localStorage.getItem("username")));
-  console.log(username)
+  // console.log(username)
 
   // const [Emailusername, setEmailusername] = useState(localStorage.getItem("email"));
-  console.log(localStorage.getItem("email"))
+  // console.log(localStorage.getItem("email"))
   let eventId;
   // let username;
   let title;
@@ -132,7 +132,7 @@ export default function DisplayEvents() {
 
   const renderActions = (item) => {
 
-    console.log(item.User.email)
+    // console.log(item.User.email)
     if (localStorage.getItem('isSuperUser') === 'true') {
       return (
         <td>
@@ -186,10 +186,10 @@ export default function DisplayEvents() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  console.log(currentEvents)
-  currentEvents.map(item => {
-    console.log(item.User)
-  })
+  // console.log(currentEvents)
+  // currentEvents.map(item => {
+  //   // console.log(item.User)
+  // })
 
   return (
 
