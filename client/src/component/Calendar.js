@@ -596,6 +596,8 @@ export default function (props) {
     return utcDateTime;
   };
 
+  const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false
+
   return (
     <div>
       <NavbarCalendar />
@@ -604,15 +606,19 @@ export default function (props) {
         <div className="">
           <>
             <div class="d-flex flex-row">
-              <Button
-                className="text-black mt-2 "
-                style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
-                onClick={handleOpenModal}
-              >
-                <span style={{ color: "white", fontWeight: "bold" }}>
-                  <i className="fa fa-plu">Schedule Meeting</i>
-                </span>
-              </Button>
+              {
+                superUserCondition && <Button
+                  className="text-black mt-2 "
+                  style={{ backgroundColor: "skyblue", marginLeft: "43%" }}
+                  onClick={handleOpenModal}
+                >
+                  <span style={{ color: "white", fontWeight: "bold" }}>
+                    <i className="fa fa-plu">Schedule Meeting</i>
+                  </span>
+                </Button>
+              }
+              
+
               <div
                 style={{
                   // border: "2px solid #ccc",
@@ -951,7 +957,8 @@ export default function (props) {
                 //   .subtract(5, "hours")
                 //   .subtract(30, "minutes")
                 //   .format("YYYY-MM-DDTHH:mm"));
-                setEditShow(true);
+                superUserCondition && setEditShow(true);
+
                 // setUserMeetingInfo({
                 //   title: info.event.title,
                 //   selectRoom: info.event.extendedProps.roomName,

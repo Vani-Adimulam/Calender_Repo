@@ -39,7 +39,6 @@ function Login() {
       objectId: objectId,
     };
 
-    localStorage.setItem("email", email);
 
     axios
       .post(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/login`, data)
@@ -55,6 +54,7 @@ function Login() {
         });
 
         console.log(res, "Logged");
+        localStorage.setItem("email", JSON.stringify(res.data.user.email));
         localStorage.setItem("token", JSON.stringify(res.data.token));
         localStorage.setItem(
           "username",
@@ -172,10 +172,62 @@ function Login() {
             <div className="text-center">
               <p>
                 𝕯𝖔𝖓'𝖙 𝖍𝖆𝖛𝖊 𝖆𝖓 𝖆𝖈𝖈𝖔𝖚𝖓𝖙?{" "}
-                <Link to="/register" className="text-Darkblue">
-                  Register
-                </Link>
+                <button type="button" className=""
+                  style={{ backgroundColor: 'indigo', color: 'white', borderRadius: '5px' }}
+                  onClick={(e) => {
+                    const data = {
+                      email: "guest@gmail.com",
+                      password: "guest@123",
+                    };
+
+
+                    axios
+                      .post(`${Backendapi.REACT_APP_BACKEND_API_URL}/user/login`, data)
+                      .then((res) => {
+                        toast.success("Login Success 😊", {
+                          position: toast.POSITION.TOP_RIGHT,
+                          autoClose: 3000,
+                          hideProgressBar: true,
+                          closeOnClick: true,
+                          pauseOnHover: false,
+                          draggable: true,
+                          progress: undefined,
+                        });
+                        localStorage.setItem("email", JSON.stringify(res.data.user.email));
+                        console.log(res.data.user, "Logged");
+                        localStorage.setItem("token", JSON.stringify(res.data.token));
+                        localStorage.setItem(
+                          "username",
+                          JSON.stringify(res.data.user.username)
+                        );
+                        localStorage.setItem("objectId", JSON.stringify(res.data.user._id));
+                        localStorage.setItem(
+                          "isSuperUser",
+                          JSON.stringify(res.data.user.isSuperUser)
+                        );
+
+                        if (res.data.user.isSuperUser) {
+                          setSuperUserEmail(res.data.user.email);
+                          console.log(res.data.user.email);
+                          navigate("/DispalyEvents");
+                        } else {
+                          navigate("/Calendar");
+                        }
+                      })
+                      .catch((err) => {
+                        toast.error("Login Failed: Invalid credentials 😫");
+                        console.log(err);
+                      })
+                      .finally(() => {
+                        setIsLoading(false); // Set loading state to false
+                      });
+
+                  }}
+                >Login As Guest</button>
               </p>
+            </div>
+            <div style={{display:'flex',justifyContent:"center",alignItems:'center'}}>
+             
             </div>
           </form>
         </div>
