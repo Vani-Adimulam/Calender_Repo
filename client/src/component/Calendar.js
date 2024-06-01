@@ -37,11 +37,11 @@ export default function (props) {
   const [StartTime, setStartTime] = useState(
     moment(new Date().toISOString()).tz("Asia/Kolkata").format()
   );
-  // console.log(StartTime, "StartTime", "Actual time");
+  console.log(StartTime, "StartTime", "Actual time");
   const [EndTime, setEndTime] = useState(
     moment(new Date().toISOString()).tz("Asia/Kolkata").format()
   );
-  // console.log(EndTime, "End time");
+  console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
@@ -846,7 +846,7 @@ export default function (props) {
                     <input
                       type="datetime-local"
                       className="form-control"
-                      value={moment(EndTime).add(1, 'hours').format("YYYY-MM-DDTHH:mm")}
+                      value={moment(EndTime).format("YYYY-MM-DDTHH:mm")}
                       onChange={(e) =>
                         setEndTime(
                           moment(e.target.value).format("YYYY-MM-DDTHH:mm")

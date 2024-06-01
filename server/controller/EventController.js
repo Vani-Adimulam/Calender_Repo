@@ -52,6 +52,7 @@ const CreateEvent = async (req, res) => {
       EndTime: { $gte: startTimeIST },
       status: "𝐑𝐞𝐣𝐞𝐜𝐭𝐞𝐝",
     });
+    console.log(existingEvent)
 
     if (existingEvent) {
       // Replace the existing rejected event with the new event

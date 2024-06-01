@@ -140,14 +140,17 @@ app.get("/", (req, res) => {
 // )
 
 // working
+
+
 app.put("/update/title/:id", async (req, res) => {
+  console.log("Api called")
   const { id } = req.params;
   const {title, roomName, StartTime, EndTime, availability, booked} = req.body
   
-  console.log(req.params);
+  console.log(req.params,"params");
   try {
-    console.log("Received ID:", id);
-    console.log("New Title:", title);
+    // console.log("Received ID:", id);
+    // console.log("New Title:", title);
 
     // Ensure the ID is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -173,14 +176,17 @@ app.put("/update/title/:id", async (req, res) => {
     }
 
     const existingSameEvent = await Event.findOne({
-      _id: { $ne: id }, // Skip the event with the provided id
+      // _id: { $ne: id }, // Skip the event with the provided id
       roomName,
-      booked,
-      availability,
-      booked,
+      $or: [
+        { availability: true },
+        { booked: true }
+      ],
       StartTime: { $lte: StartTime },
       EndTime: { $gte: EndTime },
     });
+
+    console.log(existingSameEvent,"exiting same event ....")
 
     if(!existingSameEvent){
       const existingEvent = await Event.findByIdAndUpdate(
@@ -200,6 +206,9 @@ app.put("/update/title/:id", async (req, res) => {
       }
       res.status(200).json({ existingEvent });
       console.log("Updated Event:", existingEvent);
+    }else{
+      console.log("Event Already exits...")
+      res.status(400).json("already exits event.")
     }
     
   } catch (error) {
@@ -208,18 +217,18 @@ app.put("/update/title/:id", async (req, res) => {
   }
 });
 
-const fun = async () => {
-  try {
-    const existingEvent = await Event.findByIdAndUpdate(
-      '663b66f231d99bab8268507a',  // Pass the ID directly
-      { title: 'veera hike meeting' }, // Update data
-      { new: true } // Options to return the updated document
-    );
-    console.log(existingEvent);
-  } catch (error) {
-    console.error(error);
-  }
-};
+// const fun = async () => {
+//   try {
+//     const existingEvent = await Event.findByIdAndUpdate(
+//       '663b66f231d99bab8268507a',  // Pass the ID directly
+//       { title: 'veera hike meeting' }, // Update data
+//       { new: true } // Options to return the updated document
+//     );
+//     console.log(existingEvent);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 // fun();
 
