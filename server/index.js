@@ -141,13 +141,13 @@ app.get("/", (req, res) => {
 
 // working
 
-
 app.put("/update/title/:id", async (req, res) => {
-  console.log("Api called")
+  console.log("Api called");
   const { id } = req.params;
-  const {title, roomName, StartTime, EndTime, availability, booked} = req.body
-  
-  console.log(req.params,"params");
+  const { title, roomName, StartTime, EndTime, availability, booked } =
+    req.body;
+
+  console.log(req.params, "params");
   try {
     // console.log("Received ID:", id);
     // console.log("New Title:", title);
@@ -176,19 +176,15 @@ app.put("/update/title/:id", async (req, res) => {
     }
 
     const existingSameEvent = await Event.findOne({
-      // _id: { $ne: id }, // Skip the event with the provided id
+      _id: { $ne: id }, // Skip the event with the provided id
       roomName,
-      $or: [
-        { availability: true },
-        { booked: true }
-      ],
       StartTime: { $lte: StartTime },
       EndTime: { $gte: EndTime },
     });
 
-    console.log(existingSameEvent,"exiting same event ....")
+    // console.log(existingSameEvent,"exiting same event ....")
 
-    if(!existingSameEvent){
+    if (!existingSameEvent) {
       const existingEvent = await Event.findByIdAndUpdate(
         id,
         {
@@ -206,11 +202,10 @@ app.put("/update/title/:id", async (req, res) => {
       }
       res.status(200).json({ existingEvent });
       console.log("Updated Event:", existingEvent);
-    }else{
-      console.log("Event Already exits...")
-      res.status(400).json("already exits event.")
+    } else {
+      console.log("Event Already exits...");
+      res.status(400).json("already exits event.");
     }
-    
   } catch (error) {
     console.error("Error updating event:", error);
     res.status(500).json({ error: "Server error" });

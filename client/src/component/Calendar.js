@@ -126,19 +126,20 @@ export default function (props) {
 
   // Backendapi.REACT_APP_SuperUser_EMAIL = response.data.superuserEmail;
 
-  //create a event
+  // for repeat : 
   const handleclick = async (event) => {
     event.preventDefault();
     console.log(StartTime);
     console.log(EndTime);
+  
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
     }
-
+  
     // Condition for past time slot booking
     const currentTimeIST = moment().tz("Asia/Kolkata");
-
+  
     if (moment(StartTime).isBefore(currentTimeIST)) {
       toast.error("Cannot book events for past time slots");
       setTimeout(() => {
@@ -150,66 +151,161 @@ export default function (props) {
       }, 4000);
       return;
     }
+  
     setIsLoading(true);
-
-    const payload = {
-      username: username,
-      title: title,
-      roomName: roomName,
-      StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
-      EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
-      availability: availability,
-      booked: booked,
-      User: User,
-    };
-
-    const config = { headers: { "Content-Type": "application/json" } };
-
-    try {
-      const { data } = await axios.post(
-        `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
-        payload,
-        config
-      );
-      localStorage.setItem("eventid", data.eventId);
-      setIsLoading(false);
-      toast.success("Event is Confirmed 😊", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
-
+  
+    const createEvent = async (startTime, endTime) => {
+      const payload = {
+        username: username,
+        title: title,
+        roomName: roomName,
+        StartTime: moment(startTime).tz("Asia/Kolkata").format(),
+        EndTime: moment(endTime).tz("Asia/Kolkata").format(),
+        availability: availability,
+        booked: booked,
+        User: User,
+      };
+  
+      const config = { headers: { "Content-Type": "application/json" } };
+  
       try {
-        const eventId = localStorage.getItem("eventid");
-        // console.log(eventId);
-        // console.log(username)
-        await axios.post(
-          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+        const { data } = await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
+          payload,
+          config
         );
-        await axios.post(
-          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
-        ); // Send email to superuser
-        toast.success("Check Your Confirmation Email");
-      } catch (error) {
-        // toast.error("Unable to send Email");
+        localStorage.setItem("eventid", data.eventId);
+  
+        toast.success(`Event is Confirmed for the date : ${startTime}`, {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+        });
+  
+        try {
+          const eventId = localStorage.getItem("eventid");
+          await axios.post(
+            `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+          );
+          await axios.post(
+            `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+          ); // Send email to superuser
+          toast.success("Check Your Confirmation Email");
+        } catch (error) {
+          // toast.error("Unable to send Email");
+        }
+      } catch (e) {
+        if (e.response.status === 409) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          navigate("/Calendar");
+        }
       }
-
-      window.location.reload();
-    } catch (e) {
-      if (e.response.status === 409) {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-      } else {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-        navigate("/Calendar");
-      }
+    };
+  
+    const repeatCount = parseInt(repeatMode) || 0;
+  
+    for (let i = 0; i <= repeatCount; i++) {
+      const newStartTime = moment(StartTime).add(i, 'days');
+      const newEndTime = moment(EndTime).add(i, 'days');
+      await createEvent(newStartTime, newEndTime);
     }
+  
+    setIsLoading(false);
+    window.location.reload();
   };
+  
+  //create a event //working veera
+  // const handleclick = async (event) => {
+  //   event.preventDefault();
+  //   console.log(StartTime);
+  //   console.log(EndTime);
+  //   if (moment(EndTime).isBefore(moment(StartTime))) {
+  //     toast.error("EndTime cannot be less than StartTime");
+  //     return;
+  //   }
+
+  //   // Condition for past time slot booking
+  //   const currentTimeIST = moment().tz("Asia/Kolkata");
+
+  //   if (moment(StartTime).isBefore(currentTimeIST)) {
+  //     toast.error("Cannot book events for past time slots");
+  //     setTimeout(() => {
+  //       toast.info(
+  //         `Book your event with the current time: ${currentTimeIST.format(
+  //           "YYYY-MM-DD HH:mm:ss"
+  //         )}`
+  //       );
+  //     }, 4000);
+  //     return;
+  //   }
+  //   setIsLoading(true);
+
+  //   const payload = {
+  //     username: username,
+  //     title: title,
+  //     roomName: roomName,
+  //     StartTime: moment(StartTime).tz("Asia/Kolkata").format(),
+  //     EndTime: moment(EndTime).tz("Asia/Kolkata").format(),
+  //     availability: availability,
+  //     booked: booked,
+  //     User: User,
+  //   };
+
+  //   const config = { headers: { "Content-Type": "application/json" } };
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
+  //       payload,
+  //       config
+  //     );
+  //     localStorage.setItem("eventid", data.eventId);
+  //     setIsLoading(false);
+  //     toast.success("Event is Confirmed 😊", {
+  //       position: toast.POSITION.TOP_RIGHT,
+  //       autoClose: 3000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+
+  //     try {
+  //       const eventId = localStorage.getItem("eventid");
+  //       // console.log(eventId);
+  //       // console.log(username)
+  //       await axios.post(
+  //         `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+  //       );
+  //       await axios.post(
+  //         `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+  //       ); // Send email to superuser
+  //       toast.success("Check Your Confirmation Email");
+  //     } catch (error) {
+  //       // toast.error("Unable to send Email");
+  //     }
+
+  //     window.location.reload();
+  //   } catch (e) {
+  //     if (e.response.status === 409) {
+  //       setIsLoading(false);
+  //       toast.error("The slot is already booked ☹️");
+  //     } else {
+  //       setIsLoading(false);
+  //       toast.error("The slot is already booked ☹️");
+  //       navigate("/Calendar");
+  //     }
+  //   }
+  // };
 
   //display user details
   // useEffect(() => {
@@ -312,7 +408,7 @@ export default function (props) {
           // console.log(date1 > date2, "Checking", item.title);
           if (date1 > date2) {
             if (item.availability && !item.booked) {
-            colorClass = "event-peach";
+              colorClass = "event-peach";
             } else {
               colorClass = "event-gray";
             }
@@ -342,8 +438,8 @@ export default function (props) {
             username: item.User.username,
             title: item.title,
             roomName: item.roomName,
-            availability,
-            booked,
+            availability: item.availability,
+            booked: item.booked,
             date: item.StartTime,
             EndTime: item.EndTime,
             User: item.User,
@@ -463,6 +559,8 @@ export default function (props) {
     // // console.log(roomName);
     // console.log(StartTime, "Start time for updating");
     // console.log(EndTime, "End time for updating");
+    console.log(availability);
+    console.log(booked);
 
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
@@ -483,15 +581,21 @@ export default function (props) {
       }, 4000);
       return;
     }
-    setAvailability(title === "Available" ? true : false);
-    setBooked(title !== "Available" ? true : false);
+    let updatedAvailability = availability;
+    let updatedBooked = booked;
+    if (title === "Available") {
+      updatedAvailability = true;
+      updatedBooked = false;
+    }
+    // setAvailability(title === "Available" ? true : false);
+    // setBooked(title !== "Available" ? true : false)
     const response = await axios.put(
       `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
       {
         title,
         roomName,
-        availability,
-        booked,
+        availability: updatedAvailability,
+        booked: updatedBooked,
         StartTime: moment(StartTime)
           .add(5, "hours")
           .add(30, "minutes")
@@ -501,31 +605,42 @@ export default function (props) {
           .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
       }
-    );
-    if (response.status == 200) {
-      toast.success("Event Updated Successfully");
-
-      // Set a timeout to reload the page after a delay
-      setTimeout(() => {
+    ).then(response =>{
+      if (response.status == 200) {
+        toast.success("Event Updated Successfully");
+        // Set a timeout to reload the page after a delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+       
+      } else {
+        console.log("Error occured")
+        if (response.status === 400) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          navigate("/Calendar");
+        }
+        console.log("no change");
         window.location.reload();
-      }, 3000);
-      // setTimeout(() => {
-      //   console.log("3sec");
-      // }, 3000);
-      // console.log("changed");
-      // window.location.reload();
-    } else {
-      if (response.status === 409) {
+      }
+    })
+    .catch((e)=>{
+      console.log(e)
+      if (e.status === 400) {
         setIsLoading(false);
         toast.error("The slot is already booked ☹️");
       } else {
         setIsLoading(false);
         toast.error("The slot is already booked ☹️");
-        navigate("/Calendar");
+        // navigate("/Calendar");
       }
       console.log("no change");
-      window.location.reload();
-    }
+      // window.location.reload();
+      // window.location.reload()
+    })
   };
 
   //handle delete function
@@ -608,9 +723,9 @@ export default function (props) {
     return utcDateTime;
   };
 
-  const superUserCondition =
-    JSON.parse(localStorage.getItem("isSuperUser")) || false;
+  const superUserCondition =    JSON.parse(localStorage.getItem("isSuperUser")) || false;
   console.log(superUserCondition, "Super user condition");
+  const [repeatMode,setRepeatMode] = useState(1)
   return (
     <div>
       <NavbarCalendar />
@@ -640,7 +755,7 @@ export default function (props) {
                   padding: "10px",
                   marginLeft: "5px",
                   marginTop: "5px",
-                  gap: "15px"
+                  gap: "15px",
                 }}
               >
                 <b>Events Info :</b>
@@ -803,13 +918,13 @@ export default function (props) {
                     Select Room
                   </span>
                   <select
-                    className="form-control"
+                    className="form-select"
                     value={roomName}
                     onChange={(e) => setroomName(e.target.value)}
                     required
                   >
                     <option value="" disabled selected>
-                      Select Room
+                      Select Meeting Room
                     </option>
                     <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">
                       12 Seat
@@ -855,9 +970,32 @@ export default function (props) {
                       required
                     />
                   </div>
+                  
+                  <span style={{ color: "black", fontWeight: "bold" }}>
+                    Repeat 
+                  </span>
+                  <select
+                    className="form-select"
+                    value={repeatMode}
+                    onChange={(e) => setRepeatMode(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled selected>
+                      Repeat Meting 
+                    </option>
+                   
+                    <option value="1">1 day</option>
+                    <option value="2">2 days</option>
+                    <option value="3">3 days</option>
+                    <option value="4">4 days</option>
+                    <option value="5">5 days</option>
+                  </select>
+                  
+
                   <button
                     type="submit"
-                    className="btn btn-success"
+                    
+                    className="btn btn-success mt-2"
                     disabled={isLoading}
                   >
                     <span style={{ color: "white", fontWeight: "bold" }}>
@@ -908,7 +1046,7 @@ export default function (props) {
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
-
+                console.log(info.event);
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
@@ -959,7 +1097,7 @@ export default function (props) {
                   "Event clicked:",
                   info.event.extendedProps.availability
                 );
-                // console.log("Booked", info.event.extendedProps.booked);
+                console.log("Booked", info.event.extendedProps.booked);
 
                 // console.log("Event title:", info.event.title);
                 // console.log("Event start:", info.event.start);
@@ -1024,7 +1162,8 @@ export default function (props) {
                 // });
                 setTitle(info.event.title);
                 setroomName(info.event.extendedProps.roomName);
-
+                setAvailability(info.event.extendedProps.availability);
+                setBooked(info.event.extendedProps.booked);
                 setId(info.event.extendedProps.eventid);
 
                 // setId(info.event.extendedProps.User._id)
@@ -1383,7 +1522,7 @@ export default function (props) {
                         value="available"
                         style={{ marginRight: "5px" }}
                         onChange={handleAvailabilityChange}
-                        checked={title === "Available"}
+                        checked={availability === true}
                         required
                       />
                       <span style={{ color: "" }}>Available</span>
@@ -1395,7 +1534,7 @@ export default function (props) {
                         value="book"
                         style={{ marginRight: "5px" }}
                         onChange={handleAvailabilityChange}
-                        checked={title !== "Available"}
+                        checked={booked === true}
                         required
                       />
                       Schedule Meeting
@@ -1412,7 +1551,7 @@ export default function (props) {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     defaultValue={title}
-                    disabled={title === "Available"}
+                    disabled={availability === true}
                     style={{
                       width: "100%",
                       padding: "8px",
