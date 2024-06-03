@@ -194,7 +194,7 @@ export default function (props) {
           await axios.post(
             `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
           ); // Send email to superuser
-          toast.success("Check Your Confirmation Email");
+          // toast.success("Check Your Confirmation Email");
         } catch (error) {
           // toast.error("Unable to send Email");
         }
@@ -212,7 +212,7 @@ export default function (props) {
   
     const repeatCount = parseInt(repeatMode) || 0;
   
-    for (let i = 0; i <= repeatCount; i++) {
+    for (let i = 0; i < repeatCount; i++) {
       const newStartTime = moment(StartTime).add(i, 'days');
       const newEndTime = moment(EndTime).add(i, 'days');
       await createEvent(newStartTime, newEndTime);
@@ -684,8 +684,8 @@ export default function (props) {
     } catch (error) {
       console.log(error);
     }
-    // window.location.reload();
-    // navigate("/Dashboard");
+    window.location.reload();
+    navigate("/Dashboard");
   };
 
   //Modal for popup
@@ -1047,6 +1047,11 @@ export default function (props) {
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
                 console.log(info.event);
+                const status = info.event.extendedProps.availability
+                ? "Available"
+                : info.event.extendedProps.booked
+                ? "Booked"
+                : "Unknown";
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
@@ -1061,8 +1066,8 @@ export default function (props) {
                     <strong>Username:</strong> ${
                       info.event.extendedProps.username
                     }<br>
-                    <strong>Meeting:</strong> ${
-                      info.event.extendedProps.username
+                    <strong>Status:</strong> ${
+                      status
                     }<br>
                     <strong>Event Start:</strong> ${new Date(
                       startTime
@@ -1506,8 +1511,7 @@ export default function (props) {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log(id, "meeting id");
-                  handleUpdateMeeting(id);
+                 
                 }}
               >
                 <div style={{ margin: "15px 0" }}>
@@ -1689,6 +1693,7 @@ export default function (props) {
                   type="submit"
                   style={{ backgroundColor: "skyblue" }}
                   className="btn btn-warning mt-4"
+                  onClick={()=> handleUpdateMeeting(id)}
                 >
                   Update
                 </Button>
