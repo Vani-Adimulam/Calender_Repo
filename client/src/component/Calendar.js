@@ -19,6 +19,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Backendapi from "../Backendapi";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/material_green.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import SuperUserDashboard from "../SuperUser/SuperUserDashboard";
 
 export default function (props) {
@@ -932,7 +936,90 @@ export default function (props) {
                     <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">6 Seat</option>
                   </select>
 
+                  {/* code changes start  */}
+
                   <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "15px",
+                      position: "relative", // Add position relative to position the icon correctly
+                    }}
+                  >
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      Start Time
+                    </span>
+                    <div style={{ position: "relative" }}>
+                      <Flatpickr
+                        className="form-control"
+                        value={StartTime}
+                        onChange={(date) => setStartTime(date[0]?.toISOString())}
+                        options={{
+                          enableTime: true,
+                          altInput: true,
+                          altFormat: "Y-m-d H:i",
+                          dateFormat: "Y-m-d\\TH:i:S",
+                          defaultMinute:"00",
+                          minuteIncrement: 15, // Set the minute increment to 15
+                        }}
+                        required
+                      />
+                      <FontAwesomeIcon
+                        icon={faCalendarAlt}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          pointerEvents: "none", // Make sure the icon doesn't interfere with the input field
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "15px",
+                      position: "relative", // Add position relative to position the icon correctly
+                    }}
+                  >
+                    <span style={{ color: "black", fontWeight: "bold" }}>
+                      End Time
+                    </span>
+                    <div style={{ position: "relative" }}>
+                      <Flatpickr
+                        className="form-control"
+                        value={EndTime}
+                        onChange={(date) => setEndTime(date[0]?.toISOString())}
+                        options={{
+                          enableTime: true,
+                          altInput: true,
+                          altFormat: "Y-m-d H:i",
+                          dateFormat: "Y-m-d\\TH:i:S",
+                          defaultMinute: "00",
+                          minuteIncrement: 15, // Set the minute increment to 15
+                        }}
+                        required
+                      />
+                      <FontAwesomeIcon
+                        icon={faCalendarAlt}
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          pointerEvents: "none", // Make sure the icon doesn't interfere with the input field
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* code ends here  */}
+
+
+                  {/* <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -969,7 +1056,7 @@ export default function (props) {
                       }
                       required
                     />
-                  </div>
+                  </div> */}
                   
                   <span style={{ color: "black", fontWeight: "bold" }}>
                     Repeat 
@@ -981,7 +1068,7 @@ export default function (props) {
                     required
                   >
                     <option value="" disabled selected>
-                      Repeat Meting 
+                      Repeat Meeting 
                     </option>
                    
                     <option value="1">1 day</option>
