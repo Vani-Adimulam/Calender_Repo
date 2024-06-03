@@ -55,7 +55,7 @@ function NavbarOne() {
         <div className={`md:flex md:items-center ${showMenu ? "block" : "hidden"}`}>
           <div className="flex flex-col md:flex-row md:mx-6"> 
 
-            <p className="flex items-center justify-between my-1 font-bold">Welcome: {localStorage.getItem("email")}</p>
+            <p className="flex items-center justify-between my-1 font-bold">Welcome: {JSON.parse(localStorage.getItem("email"))}</p>
             <NavLink
               to="/Calendar"
               activeClassName="font-bold"

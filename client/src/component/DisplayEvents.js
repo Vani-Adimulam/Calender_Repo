@@ -219,7 +219,7 @@ export default function DisplayEvents() {
                 <th className='text-black'>Room Name</th>
                 <th className='text-black'>StartTime</th>
                 <th className='text-black'>EndTime</th>
-                <th className='text-black'>Booked By
+                <th className='text-black' style={{width:'230px'}}>Booked By
                   <input
                     type="text"
                     value={searchBookedBy}
@@ -229,9 +229,9 @@ export default function DisplayEvents() {
                   />
                 </th>
                 <th className='text-black'>Status</th>
-                {localStorage.getItem('isSuperUser') === 'true' && (
+                {/* {localStorage.getItem('isSuperUser') === 'true' && (
                   <th className='text-black'>Actions</th>
-                )}
+                )} */}
               </tr>
             </thead>
             <tbody>
@@ -248,8 +248,8 @@ export default function DisplayEvents() {
                     <span className="clock-animation"></span>
                   </td>
                   <td>{item.User.username}</td>
-                  <td>{item.status}</td>
-                  {renderActions(item)}
+                  <td>{item.availability ? "Available" : "Booked"}</td>
+                  {/* {renderActions(item)} */}
                 </tr>
 
               )) : "Loading..."
