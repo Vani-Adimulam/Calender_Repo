@@ -135,15 +135,15 @@ export default function (props) {
     event.preventDefault();
     console.log(StartTime);
     console.log(EndTime);
-  
+
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
     }
-  
+
     // Condition for past time slot booking
     const currentTimeIST = moment().tz("Asia/Kolkata");
-  
+
     if (moment(StartTime).isBefore(currentTimeIST)) {
       toast.error("Cannot book events for past time slots");
       setTimeout(() => {
@@ -155,23 +155,27 @@ export default function (props) {
       }, 4000);
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     const createEvent = async (startTime, endTime) => {
       const payload = {
         username: username,
         title: title,
         roomName: roomName,
-        StartTime: moment(startTime).tz("Asia/Kolkata").format(),
-        EndTime: moment(endTime).tz("Asia/Kolkata").format(),
+        StartTime: moment(startTime)
+          .subtract(5, "hours")
+          .subtract(30, "minutes").format(),
+        EndTime: moment(endTime)
+          .subtract(5, "hours")
+          .subtract(30, "minutes").format(),
         availability: availability,
         booked: booked,
         User: User,
       };
-  
+
       const config = { headers: { "Content-Type": "application/json" } };
-  
+
       try {
         const { data } = await axios.post(
           `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
@@ -179,7 +183,7 @@ export default function (props) {
           config
         );
         localStorage.setItem("eventid", data.eventId);
-  
+
         toast.success(`Event is Confirmed for the date : ${startTime}`, {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 3000,
@@ -189,7 +193,7 @@ export default function (props) {
           draggable: true,
           progress: undefined,
         });
-  
+
         try {
           const eventId = localStorage.getItem("eventid");
           await axios.post(
@@ -213,19 +217,19 @@ export default function (props) {
         }
       }
     };
-  
+
     const repeatCount = parseInt(repeatMode) || 0;
-  
+
     for (let i = 0; i < repeatCount; i++) {
       const newStartTime = moment(StartTime).add(i, 'days');
       const newEndTime = moment(EndTime).add(i, 'days');
       await createEvent(newStartTime, newEndTime);
     }
-  
+
     setIsLoading(false);
     window.location.reload();
   };
-  
+
   //create a event //working veera
   // const handleclick = async (event) => {
   //   event.preventDefault();
@@ -609,14 +613,14 @@ export default function (props) {
           // .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
       }
-    ).then(response =>{
+    ).then(response => {
       if (response.status == 200) {
         toast.success("Event Updated Successfully");
         // Set a timeout to reload the page after a delay
         setTimeout(() => {
           window.location.reload();
         }, 3000);
-       
+
       } else {
         console.log("Error occured")
         if (response.status === 400) {
@@ -631,20 +635,20 @@ export default function (props) {
         window.location.reload();
       }
     })
-    .catch((e)=>{
-      console.log(e)
-      if (e.status === 400) {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-      } else {
-        setIsLoading(false);
-        toast.error("The slot is already booked ☹️");
-        // navigate("/Calendar");
-      }
-      console.log("no change");
-      // window.location.reload();
-      // window.location.reload()
-    })
+      .catch((e) => {
+        console.log(e)
+        if (e.status === 400) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          // navigate("/Calendar");
+        }
+        console.log("no change");
+        // window.location.reload();
+        // window.location.reload()
+      })
   };
 
   //handle delete function
@@ -727,9 +731,9 @@ export default function (props) {
     return utcDateTime;
   };
 
-  const superUserCondition =    JSON.parse(localStorage.getItem("isSuperUser")) || false;
+  const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false;
   console.log(superUserCondition, "Super user condition");
-  const [repeatMode,setRepeatMode] = useState(1)
+  const [repeatMode, setRepeatMode] = useState(1)
   return (
     <div>
       <NavbarCalendar />
@@ -1057,9 +1061,9 @@ export default function (props) {
                       required
                     />
                   </div>
-                  
+
                   <span style={{ color: "black", fontWeight: "bold" }}>
-                    Repeat 
+                    Repeat
                   </span>
                   <select
                     className="form-select"
@@ -1068,20 +1072,20 @@ export default function (props) {
                     required
                   >
                     <option value="" disabled selected>
-                      Repeat Meeting 
+                      Repeat Meeting
                     </option>
-                   
+
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>
                     <option value="3">3 days</option>
                     <option value="4">4 days</option>
                     <option value="5">5 days</option>
                   </select>
-                  
+
 
                   <button
                     type="submit"
-                    
+
                     className="btn btn-success mt-2"
                     disabled={isLoading}
                   >
@@ -1135,10 +1139,10 @@ export default function (props) {
                   .format("YYYY-MM-DDTHH:mm");
                 console.log(info.event);
                 const status = info.event.extendedProps.availability
-                ? "Available"
-                : info.event.extendedProps.booked
-                ? "Booked"
-                : "Unknown";
+                  ? "Available"
+                  : info.event.extendedProps.booked
+                    ? "Booked"
+                    : "Unknown";
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
@@ -1147,14 +1151,11 @@ export default function (props) {
 
                   content: `
                     <strong>Title:</strong>${info.event.title}</span><br>
-                    <strong>Room Name:</strong> ${
-                      info.event.extendedProps.roomName
+                    <strong>Room Name:</strong> ${info.event.extendedProps.roomName
                     }<br>
-                    <strong>Username:</strong> ${
-                      info.event.extendedProps.username
+                    <strong>Username:</strong> ${info.event.extendedProps.username
                     }<br>
-                    <strong>Status:</strong> ${
-                      status
+                    <strong>Status:</strong> ${status
                     }<br>
                     <strong>Event Start:</strong> ${new Date(
                       startTime
@@ -1598,7 +1599,7 @@ export default function (props) {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                 
+
                 }}
               >
                 <div style={{ margin: "15px 0" }}>
@@ -1780,7 +1781,7 @@ export default function (props) {
                   type="submit"
                   style={{ backgroundColor: "skyblue" }}
                   className="btn btn-warning mt-4"
-                  onClick={()=> handleUpdateMeeting(id)}
+                  onClick={() => handleUpdateMeeting(id)}
                 >
                   Update
                 </Button>
