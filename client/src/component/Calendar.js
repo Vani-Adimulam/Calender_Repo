@@ -601,12 +601,12 @@ export default function (props) {
         availability: updatedAvailability,
         booked: updatedBooked,
         StartTime: moment(StartTime)
-          .add(5, "hours")
-          .add(30, "minutes")
+          // .add(5, "hours")
+          // .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
         EndTime: moment(EndTime)
-          .add(5, "hours")
-          .add(30, "minutes")
+          // .add(5, "hours")
+          // .add(30, "minutes")
           .format("YYYY-MM-DDTHH:mm"),
       }
     ).then(response =>{
