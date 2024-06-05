@@ -938,7 +938,7 @@ export default function (props) {
 
                   {/* code changes start  */}
 
-                  <div
+                  {/* <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -1014,12 +1014,12 @@ export default function (props) {
                         }}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* code ends here  */}
 
 
-                  {/* <div
+                  <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
@@ -1056,7 +1056,7 @@ export default function (props) {
                       }
                       required
                     />
-                  </div> */}
+                  </div>
                   
                   <span style={{ color: "black", fontWeight: "bold" }}>
                     Repeat 
