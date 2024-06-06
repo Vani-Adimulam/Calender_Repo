@@ -248,7 +248,7 @@ export default function DisplayEvents() {
                     <span className="clock-animation"></span>
                   </td>
                   <td>{item.User.username}</td>
-                  <td>{item.availability ? "Available" : "Booked"}</td>
+                  <td>{item.availability ? "Available" : "Scheduled"}</td>
                   {/* {renderActions(item)} */}
                 </tr>
 
