@@ -91,6 +91,14 @@ export default function (props) {
     }
   };
 
+  useEffect(() => {
+    // Cleanup function to remove all popovers when component unmounts
+    return () => {
+      const popovers = document.querySelectorAll(".popover");
+      popovers.forEach((p) => p.remove());
+    };
+  }, []);
+
   // For Edit Modal*****
   const [ViewEdit, setEditShow] = useState(false);
   const handleEditShow = () => {
@@ -130,19 +138,22 @@ export default function (props) {
 
   // Backendapi.REACT_APP_SuperUser_EMAIL = response.data.superuserEmail;
 
-  // for repeat : 
+  // for repeat :
   const handleclick = async (event) => {
     event.preventDefault();
     console.log(StartTime);
     console.log(EndTime);
+
 
     if (moment(EndTime).isBefore(moment(StartTime))) {
       toast.error("EndTime cannot be less than StartTime");
       return;
     }
 
+
     // Condition for past time slot booking
     const currentTimeIST = moment().tz("Asia/Kolkata");
+
 
     if (moment(StartTime).isBefore(currentTimeIST)) {
       toast.error("Cannot book events for past time slots");
@@ -156,7 +167,9 @@ export default function (props) {
       return;
     }
 
+
     setIsLoading(true);
+
 
     const createEvent = async (startTime, endTime) => {
       const payload = {
@@ -174,7 +187,9 @@ export default function (props) {
         User: User,
       };
 
+
       const config = { headers: { "Content-Type": "application/json" } };
+
 
       try {
         const { data } = await axios.post(
@@ -183,6 +198,7 @@ export default function (props) {
           config
         );
         localStorage.setItem("eventid", data.eventId);
+
 
         toast.success(`Event is Confirmed for the date : ${startTime}`, {
           position: toast.POSITION.TOP_RIGHT,
@@ -193,6 +209,7 @@ export default function (props) {
           draggable: true,
           progress: undefined,
         });
+
 
         try {
           const eventId = localStorage.getItem("eventid");
@@ -218,17 +235,21 @@ export default function (props) {
       }
     };
 
+
     const repeatCount = parseInt(repeatMode) || 0;
 
+
     for (let i = 0; i < repeatCount; i++) {
-      const newStartTime = moment(StartTime).add(i, 'days');
-      const newEndTime = moment(EndTime).add(i, 'days');
+      const newStartTime = moment(StartTime).add(i, "days");
+      const newEndTime = moment(EndTime).add(i, "days");
       await createEvent(newStartTime, newEndTime);
     }
+
 
     setIsLoading(false);
     window.location.reload();
   };
+
 
   //create a event //working veera
   // const handleclick = async (event) => {
@@ -597,9 +618,8 @@ export default function (props) {
     }
     // setAvailability(title === "Available" ? true : false);
     // setBooked(title !== "Available" ? true : false)
-    const response = await axios.put(
-      `${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`,
-      {
+    const response = await axios
+      .put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`, {
         title,
         roomName,
         availability: updatedAvailability,
@@ -702,6 +722,7 @@ export default function (props) {
   };
 
   const handleCloseModal = () => {
+    window.location.reload();
     setShowModal(false);
   };
 
@@ -764,6 +785,7 @@ export default function (props) {
                   marginLeft: "5px",
                   marginTop: "5px",
                   gap: "15px",
+                  fontSize: "14px",
                 }}
               >
                 <b>Events Info :</b>
@@ -834,7 +856,7 @@ export default function (props) {
                   <label
                     style={{
                       display: "block",
-                      marginBottom: "10px",
+                      marginBottom: "5px",
                       color: "#444",
                       fontFamily: "Arial",
                       fontSize: "20px",
@@ -860,12 +882,13 @@ export default function (props) {
                   onSubmit={handleclick}
                   style={{
                     backgroundColor: "lightgray",
-                    padding: "20px",
+                    paddingLeft: "20px",
                     borderRadius: "5px",
                     width: "350px",
+                    paddingTop: "5px",
                   }}
                 >
-                  <div style={{ margin: "15px 0" }}>
+                  <div style={{ margin: "10px 0" }}>
                     <span style={{ color: "black", fontWeight: "bold" }}>
                       Availability
                     </span>
@@ -1022,7 +1045,6 @@ export default function (props) {
 
                   {/* code ends here  */}
 
-
                   <div
                     style={{
                       display: "flex",
@@ -1075,6 +1097,7 @@ export default function (props) {
                       Repeat Meeting
                     </option>
 
+
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>
                     <option value="3">3 days</option>
@@ -1085,8 +1108,7 @@ export default function (props) {
 
                   <button
                     type="submit"
-
-                    className="btn btn-success mt-2"
+                    className="btn btn-success mt-3 "
                     disabled={isLoading}
                   >
                     <span style={{ color: "white", fontWeight: "bold" }}>
@@ -1141,22 +1163,20 @@ export default function (props) {
                 const status = info.event.extendedProps.availability
                   ? "Available"
                   : info.event.extendedProps.booked
-                    ? "Booked"
-                    : "Unknown";
+                  ? "Scheduled"
+                  : "Unknown";
                 return new bootstrap.Popover(info.el, {
                   title: info.event.title,
                   placement: "auto",
                   trigger: "hover",
                   customClass: "PopoverStyle",
-
                   content: `
                     <strong>Title:</strong>${info.event.title}</span><br>
                     <strong>Room Name:</strong> ${info.event.extendedProps.roomName
                     }<br>
                     <strong>Username:</strong> ${info.event.extendedProps.username
                     }<br>
-                    <strong>Status:</strong> ${status
-                    }<br>
+                    <strong>Status:</strong> ${status}<br>
                     <strong>Event Start:</strong> ${new Date(
                       startTime
                     ).toLocaleString("en-US", {
@@ -1591,6 +1611,7 @@ export default function (props) {
             onHide={handleEditClose}
             backdrop="static"
             keyboard={false}
+            size="md"
           >
             <Modal.Header closeButton>
               <Modal.Title>Update Meeting</Modal.Title>
@@ -1607,7 +1628,7 @@ export default function (props) {
                     Availability
                   </span>
                   <div>
-                    <label style={{ marginRight: "10px" }}>
+                    <label style={{ marginRight: "20px" }}>
                       <input
                         type="radio"
                         name="availability"
@@ -1635,7 +1656,7 @@ export default function (props) {
                 </div>
                 <div className="form-group">
                   <lable style={{ color: "black", fontWeight: "bold" }}>
-                    Title
+                    Meeting Title
                   </lable>
                   <input
                     type="text"
@@ -1793,18 +1814,19 @@ export default function (props) {
                 >
                   Delete
                 </Button>
+                <Button
+                  variant="secondary"
+                  className="text-black mt-4"
+                  style={{ backgroundColor: "gray", marginLeft: "240px" }}
+                  onClick={handleEditClose}
+                >
+                  Close
+                </Button>
               </form>
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                className="text-black"
-                style={{ backgroundColor: "gray" }}
-                onClick={handleEditClose}
-              >
-                Close
-              </Button>
-            </Modal.Footer>
+            {/* <Modal.Footer>
+              
+            </Modal.Footer> */}
           </Modal>
         </div>
       </div>
