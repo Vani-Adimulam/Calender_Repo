@@ -42,7 +42,7 @@ app.use(express.static(path.join(builPath)));
 
 app.get("/", (req, res) => {
   res.json({ message: "API Working" });
-});
+}); 
 // app.get("/update/title/:id/title", async(req,res)=>{
 
 // app.put("/update/title/:id",async (req, res) => {

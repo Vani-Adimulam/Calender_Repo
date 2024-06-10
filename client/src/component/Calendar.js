@@ -177,11 +177,13 @@ export default function (props) {
         title: title,
         roomName: roomName,
         StartTime: moment(startTime)
-          .subtract(5, "hours")
-          .subtract(30, "minutes").format(),
+          // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+          // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+          .format(),
         EndTime: moment(endTime)
-          .subtract(5, "hours")
-          .subtract(30, "minutes").format(),
+          // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+          // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+          .format(),
         availability: availability,
         booked: booked,
         User: User,
@@ -625,12 +627,12 @@ export default function (props) {
         availability: updatedAvailability,
         booked: updatedBooked,
         StartTime: moment(StartTime)
-          // .add(5, "hours")
-          // .add(30, "minutes")
+          .add(5, "hours")         // for live need to comment
+          .add(30, "minutes")      // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
         EndTime: moment(EndTime)
-          // .add(5, "hours")
-          // .add(30, "minutes")
+          .add(5, "hours")   // for live need to comment
+          .add(30, "minutes") // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
       }
     ).then(response => {
