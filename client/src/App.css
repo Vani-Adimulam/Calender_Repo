@@ -245,15 +245,19 @@
 
 
   .event-yellow {
-    background-color: hsla(67, 73%, 70%, 0.959);
+    background-color: #50C878;
   }
 
   .event-green {
-    background-color: rgb(186, 8, 174);
+    background-color: #73c2fb;
   }
 
   .event-gray {
-    background-color: rgb(241, 128, 128);
+    background-color: #bdcdd8;
+  }
+
+  .event-peach {
+    background-color: peachpuff;
   }
 
 
@@ -304,3 +308,6 @@
 }
 
 
+.btn-rounded {
+  border-radius: 8px;
+}

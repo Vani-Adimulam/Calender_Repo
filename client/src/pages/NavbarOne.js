@@ -53,9 +53,9 @@ function NavbarOne() {
         </div> */}
 
         <div className={`md:flex md:items-center ${showMenu ? "block" : "hidden"}`}>
-          <div className="flex flex-col md:flex-row md:mx-6">
+          <div className="flex flex-col md:flex-row md:mx-6"> 
 
-            <p className="flex items-center justify-between">𝗪𝗲𝗹𝗰𝗼𝗺: {localStorage.getItem("email")}</p>
+            <p className="flex items-center justify-between my-1 font-bold">Welcome: {JSON.parse(localStorage.getItem("email"))}</p>
             <NavLink
               to="/Calendar"
               activeClassName="font-bold"
@@ -74,7 +74,7 @@ function NavbarOne() {
             </NavLink> */}
 
             <button
-              className="my-1 text-gray-100 md:mx-1 md:my-0 hover:text-gray-300 text-black bg-light-blue hover:bg-red"
+              className="my-1 text-gray-100 md:mx-1 md:my-0 hover:text-gray-300 text-black bg-light-blue hover:bg-red btn-rounded"
               onClick={() => { setShowMenu(false); logut(); }}
             >
               𝐋𝐨𝐠𝐨𝐮𝐭

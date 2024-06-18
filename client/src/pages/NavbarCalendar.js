@@ -31,7 +31,7 @@ function NavbarCalendar() {
       <div className="container mx-auto px-6 py-3 md:flex md:justify-between md:items-center">
         <div className="flex items-center justify-between">
           {/* <span className="text-black text-center text-2xl font-bold tracking-wider">𝕮𝖔𝖓𝖋𝖊𝖗𝖊𝖓𝖈𝖊 𝕽𝖔𝖔𝖒  𝕭𝖔𝖔𝓚𝖎𝖓𝖌</span> */}
-          <span class="text-black text-center text-2xl font-bold tracking-wider">𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦 𝐁𝐨𝐨𝐤</span>
+          <span className="text-black text-center text-2xl font-bold tracking-wider">𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦 𝐁𝐨𝐨𝐤</span>
           <button
             className="md:hidden rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             onClick={() => setShowMenu(!showMenu)}
@@ -50,12 +50,12 @@ function NavbarCalendar() {
         <div className={`md:flex md:items-center ${showMenu ? "block" : "hidden"}`}>
           <div className="flex flex-col md:flex-row md:mx-6">
 
-            <p className="flex items-center justify-between">𝗪𝗲𝗹𝗰𝗼𝗺 : {localStorage.getItem("email")}</p>
+            <p className="flex items-center justify-between my-1 font-bold"> Welcome: {JSON.parse(localStorage.getItem("email"))}</p>
 
 
             {/* <NavLink
               to="/dashboard"
-              activeClassName="font-bold"
+              activeclassname="font-bold"
               className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black dashboard-img"
               onClick={() => setShowMenu(false)}
             >
@@ -63,8 +63,8 @@ function NavbarCalendar() {
 
             <NavLink
               to="/DispalyEvents"
-              activeClassName="font-bold"
-              className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black flex items-center"
+              activeclassname="font-bold"
+              className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black flex items-center "
               onClick={() => setShowMenu(false)}
             >
               <svg
@@ -85,8 +85,8 @@ function NavbarCalendar() {
 
             {/* 
             <NavLink
-              to="/login"
-              activeClassName="font-bold"
+              to="/login" 
+              activeclassname="font-bold"
               className="my-1 text-gray-100 md:mx-4 md:my-0 hover:text-gray-300 text-black"
               onClick={() => setShowMenu(false)}
             >
@@ -94,7 +94,7 @@ function NavbarCalendar() {
             </NavLink> */}
 
             <button
-              className="my-1 text-gray-100 md:mx-1 md:my-0 hover:text-gray-300 text-black bg-light-blue hover:bg-red"
+              className="my-1 text-gray-100 md:mx-1 md:my-0 hover:text-gray-300 text-black bg-light-blue hover:bg-red btn-rounded"
               onClick={() => { setShowMenu(false); logut(); }}
             >
               𝐋𝐨𝐠𝐨𝐮𝐭
