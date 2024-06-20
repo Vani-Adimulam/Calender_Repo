@@ -206,8 +206,28 @@ app.put("/update/title/:id", async (req, res) => {
       res.status(200).json({ existingEvent });
       console.log("Updated Event:", existingEvent);
     } else {
-      console.log("Event Already exits...");
-      res.status(400).json("already exits event.");
+      
+      const alreadyExitsEvent = await Event.findOne({_id: id})
+
+      if (alreadyExitsEvent) {
+            // Replace the existing rejected event with the new event
+        // alreadyExitsEvent.username = username;
+        alreadyExitsEvent.title = title;
+        alreadyExitsEvent.StartTime = StartTime;
+        alreadyExitsEvent.EndTime = EndTime;
+        alreadyExitsEvent.availability = availability;
+        alreadyExitsEvent.booked = booked;
+        // alreadyExitsEvent.User = User;
+        // alreadyExitsEvent.status = "𝐈𝐧𝐢𝐭𝐢𝐚𝐭𝐞𝐝";
+        await alreadyExitsEvent.save();
+
+        res.status(200).send({status: "Event Updated Successfully."})
+      }else{
+        res.status(400).json({status: "Failed to update to the event."})
+      }
+
+      // console.log("Event Already exits...");
+      // res.status(400).json("already exits event.");
     }
   } catch (error) {
     console.error("Error updating event:", error);
