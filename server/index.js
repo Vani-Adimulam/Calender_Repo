@@ -213,6 +213,7 @@ app.put("/update/title/:id", async (req, res) => {
             // Replace the existing rejected event with the new event
         // alreadyExitsEvent.username = username;
         alreadyExitsEvent.title = title;
+        alreadyExitsEvent.roomName = roomName;
         alreadyExitsEvent.StartTime = StartTime;
         alreadyExitsEvent.EndTime = EndTime;
         alreadyExitsEvent.availability = availability;
