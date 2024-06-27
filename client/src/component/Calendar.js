@@ -251,7 +251,7 @@ export default function (props) {
 
 
     setIsLoading(false);
-    // window.location.reload();
+    window.location.reload();
   };
 
 
@@ -754,19 +754,26 @@ export default function (props) {
       if (response.status == 200) {
         toast.success("Event Updated Successfully");
         // Set a timeout to reload the page after a delay
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 3000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
 
       } else {
         console.log("Error occured")
         if (response.status === 400) {
           setIsLoading(false);
           toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
         } else {
           setIsLoading(false);
           toast.error("The slot is already booked ☹️");
-          // navigate("/Calendar");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
         }
         console.log("no change");
         // window.location.reload();
@@ -774,13 +781,19 @@ export default function (props) {
     })
       .catch((e) => {
         console.log(e)
-        console.log(response)
         if (e.status === 400) {
           setIsLoading(false);
           toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
         } else {
           setIsLoading(false);
           toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
           navigate("/Calendar");
         }
         console.log("no change");
@@ -811,23 +824,32 @@ export default function (props) {
             .add(30, "minutes") // for live need to comment
             .format("YYYY-MM-DDTHH:mm"),
         }
+        
       ).then(response => {
         if (response.status == 200) {
           toast.success("Event Updated Successfully");
           // Set a timeout to reload the page after a delay
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 3000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
   
         } else {
           console.log("Error occured")
+          console.log(response, "Error occured while starttime changed")
           if (response.status === 400) {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           } else {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
-            // navigate("/Calendar");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           }
           console.log("no change");
           // window.location.reload();
@@ -838,16 +860,25 @@ export default function (props) {
           if (e.status === 400) {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           } else {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
-            // navigate("/Calendar");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           }
           console.log("no change");
           // window.location.reload();
           // window.location.reload()
         })
       // }
+
+      console.log(response)
 
         // To create event 
         // const createEvent = async (changedEndTime1, endTime) => {
@@ -889,10 +920,10 @@ export default function (props) {
     
             toast.success(`Event is Confirmed for the date : ${StartTime}`, {
               position: toast.POSITION.TOP_RIGHT,
-              // autoClose: 3000,
-              // hideProgressBar: true,
-              // closeOnClick: true,
-              // pauseOnHover: false,
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: false,
               draggable: true,
               progress: undefined,
             });
@@ -914,10 +945,17 @@ export default function (props) {
             if (e.response.status === 409) {
               setIsLoading(false);
               toast.error("The slot is already booked ☹️");
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              navigate("/Calendar");
             } else {
               setIsLoading(false);
               toast.error("The slot is already booked ☹️");
-              // navigate("/Calendar");
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              navigate("/Calendar");
             }
           }
         // };
@@ -946,19 +984,26 @@ export default function (props) {
         if (response.status == 200) {
           toast.success("Event Updated Successfully");
           // Set a timeout to reload the page after a delay
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 3000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
   
         } else {
           console.log("Error occured")
           if (response.status === 400) {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           } else {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
-            // navigate("/Calendar");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           }
           console.log("no change");
           // window.location.reload();
@@ -969,10 +1014,17 @@ export default function (props) {
           if (e.status === 400) {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           } else {
             setIsLoading(false);
             toast.error("The slot is already booked ☹️");
-            // navigate("/Calendar");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            navigate("/Calendar");
           }
           console.log("no change");
           // window.location.reload();
@@ -1013,11 +1065,11 @@ export default function (props) {
     
     
             toast.success(`Event is Confirmed for the date : ${changedStartTime1}`, {
-              // position: toast.POSITION.TOP_RIGHT,
-              // autoClose: 3000,
-              // hideProgressBar: true,
-              // closeOnClick: true,
-              // pauseOnHover: false,
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 3000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: false,
               draggable: true,
               progress: undefined,
             });
@@ -1039,10 +1091,17 @@ export default function (props) {
             if (e.response.status === 409) {
               setIsLoading(false);
               toast.error("The slot is already booked ☹️");
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              navigate("/Calendar");
             } else {
               setIsLoading(false);
               toast.error("The slot is already booked ☹️");
-              // navigate("/Calendar");
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              navigate("/Calendar");
             }
           }
         // };
@@ -1663,7 +1722,7 @@ export default function (props) {
                   ? "Scheduled"
                   : "Unknown";
                 return new bootstrap.Popover(info.el, {
-                  title: info.event.title,
+                  title: `${info.event.title} <button type="button" class="close popover-close" aria-label="Close" style="position: absolute; top: 5px; right: 5px;"><span aria-hidden="true">&times;</span></button>`,
                   placement: "auto",
                   trigger: "hover",
                   customClass: "PopoverStyle",
