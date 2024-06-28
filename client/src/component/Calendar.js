@@ -801,8 +801,224 @@ export default function (props) {
         // window.location.reload()
       })
     }
+    else if (isEndTimeChanged && isStartTimeChanged) {
+
+
+      const response = await axios
+      .put(`${Backendapi.REACT_APP_BACKEND_API_URL}/update/title/${id}`, {
+        title,
+        roomName,
+        availability: updatedAvailability,
+        booked: updatedBooked,
+        StartTime: moment(changedStartTime1)
+          .add(5, "hours")         // for live need to comment
+          .add(30, "minutes")      // for live need to comment
+          .format("YYYY-MM-DDTHH:mm"),
+        EndTime: moment(changedEndTime1)
+          .add(5, "hours")   // for live need to comment
+          .add(30, "minutes") // for live need to comment
+          .format("YYYY-MM-DDTHH:mm"),
+      }
+      
+    ).then(response => {
+      if (response.status == 200) {
+        toast.success("Event Updated Successfully");
+        // Set a timeout to reload the page after a delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+
+      } else {
+        console.log("Error occured")
+        console.log(response, "Error occured while starttime changed")
+        if (response.status === 400) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        }
+        console.log("no change");
+        // window.location.reload();
+      }
+    })
+      .catch((e) => {
+        console.log(e)
+        if (e.status === 400) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        }
+        console.log("no change");
+        // window.location.reload();
+        // window.location.reload()
+      })
+    // }
+
+    const payload = {
+      username: username,
+      title: "Available",
+      roomName: roomName,
+      StartTime: moment(startingTime)
+        // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+        // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+        .format(),
+      EndTime: moment(changedStartTime1)
+        // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+        // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+        .format(),
+      availability: true,
+      booked: false,
+      User: User,
+    };
+
+    console.log("Middle Middle event")
+    const config = { headers: { "Content-Type": "application/json" } };
+
+
+    try {
+      const { data } = await axios.post(
+        `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
+        payload,
+        config
+      );
+      localStorage.setItem("eventid", data.eventId);
+
+
+      toast.success(`Event is Confirmed for the date : ${StartTime}`, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+
+
+      try {
+        const eventId = localStorage.getItem("eventid");
+        await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+        );
+        // await axios.post(
+        //   `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+        // ); // Send email to superuser
+        // toast.success("Check Your Confirmation Email");
+      } catch (error) {
+        // toast.error("Unable to send Email");
+      }
+    } catch (e) {
+      if (e.response.status === 409) {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+        navigate("/Calendar");
+      } else {
+        setIsLoading(false);
+        toast.error("The slot is already booked ☹️");
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+        navigate("/Calendar");
+      }
+    }
+
+      const payload2 = {
+        username: username,
+        title: "Available",
+        roomName: roomName,
+        StartTime: moment(changedEndTime1)
+          // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+          // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+          .format(),
+        EndTime: moment(endingTime)
+          // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+          // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+          .format(),
+        availability: true,
+        booked: false,
+        User: User,
+      };
+
+      console.log("Middle Middle event")
+      const config2 = { headers: { "Content-Type": "application/json" } };
+
+
+      try {
+        const { data } = await axios.post(
+          `${Backendapi.REACT_APP_BACKEND_API_URL}/create-event`,
+          payload2,
+          config2
+        );
+        localStorage.setItem("eventid", data.eventId);
+
+
+        toast.success(`Event is Confirmed for the date : ${StartTime}`, {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+        });
+
+
+        try {
+          const eventId = localStorage.getItem("eventid");
+          await axios.post(
+            `${Backendapi.REACT_APP_BACKEND_API_URL}/send/${username}/${Emailusername}/${title}`
+          );
+          // await axios.post(
+          //   `${Backendapi.REACT_APP_BACKEND_API_URL}/send/superuser/${username}/${Backendapi.REACT_APP_SuperUser_EMAIL}/${title}`
+          // ); // Send email to superuser
+          // toast.success("Check Your Confirmation Email");
+        } catch (error) {
+          // toast.error("Unable to send Email");
+        }
+      } catch (e) {
+        if (e.response.status === 409) {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        } else {
+          setIsLoading(false);
+          toast.error("The slot is already booked ☹️");
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          navigate("/Calendar");
+        }
+      }
+    }
+
+
     else {
-      if (isStartTimeChanged) { 
+      if (isStartTimeChanged ) { 
         const duration = moment.duration(changedEndTime1.diff(StartTime));
 
         const totalMinutes = duration.asMinutes();
@@ -1326,7 +1542,7 @@ export default function (props) {
                   onClick={handleOpenModal}
                 >
                   <span style={{ color: "white", fontWeight: "bold" }}>
-                    <i className="fa fa-plu">Schedule Meeting</i>
+                    <i className="fa fa-plu underline">Book Room </i>
                   </span>
                 </Button>
               )}
