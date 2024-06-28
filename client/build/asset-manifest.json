@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.5d212ff4.css",
-    "main.js": "/static/js/main.b2fcfc90.js",
+    "main.css": "/static/css/main.eac994d0.css",
+    "main.js": "/static/js/main.4bdc91d5.js",
     "static/js/787.633816a4.chunk.js": "/static/js/787.633816a4.chunk.js",
     "static/media/pic2.jpg": "/static/media/pic2.e203ea28a8a08a9009f3.jpg",
     "static/media/animate.gif": "/static/media/animate.7ee2f3450cc8a31b0cb6.gif",
@@ -9,12 +9,12 @@
     "static/media/calendar-icon.png": "/static/media/calendar-icon.c430f588a00c21c49787.png",
     "static/media/P2F_Logo.webp": "/static/media/P2F_Logo.7fb24169e5643508ae6a.webp",
     "index.html": "/index.html",
-    "main.5d212ff4.css.map": "/static/css/main.5d212ff4.css.map",
-    "main.b2fcfc90.js.map": "/static/js/main.b2fcfc90.js.map",
+    "main.eac994d0.css.map": "/static/css/main.eac994d0.css.map",
+    "main.4bdc91d5.js.map": "/static/js/main.4bdc91d5.js.map",
     "787.633816a4.chunk.js.map": "/static/js/787.633816a4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5d212ff4.css",
-    "static/js/main.b2fcfc90.js"
+    "static/css/main.eac994d0.css",
+    "static/js/main.4bdc91d5.js"
   ]
 }
