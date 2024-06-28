@@ -179,12 +179,12 @@ export default function (props) {
         title: title,
         roomName: roomName,
         StartTime: moment(startTime)
-          // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
-          // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+          .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+          .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
           .format(),
         EndTime: moment(endTime)
-          // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
-          // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+          .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+          .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
           .format(),
         availability: availability,
         booked: booked,
@@ -741,12 +741,12 @@ export default function (props) {
         availability: updatedAvailability,
         booked: updatedBooked,
         StartTime: moment(StartTime)
-          .add(5, "hours")         // for live need to comment
-          .add(30, "minutes")      // for live need to comment
+          // .add(5, "hours")         // for live need to comment
+          // .add(30, "minutes")      // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
         EndTime: moment(EndTime)
-          .add(5, "hours")   // for live need to comment
-          .add(30, "minutes") // for live need to comment
+          // .add(5, "hours")   // for live need to comment
+          // .add(30, "minutes") // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
       }
     ).then(response => {
@@ -811,12 +811,12 @@ export default function (props) {
         availability: updatedAvailability,
         booked: updatedBooked,
         StartTime: moment(changedStartTime1)
-          .add(5, "hours")         // for live need to comment
-          .add(30, "minutes")      // for live need to comment
+          // .add(5, "hours")         // for live need to comment
+          // .add(30, "minutes")      // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
         EndTime: moment(changedEndTime1)
-          .add(5, "hours")   // for live need to comment
-          .add(30, "minutes") // for live need to comment
+          // .add(5, "hours")   // for live need to comment
+          // .add(30, "minutes") // for live need to comment
           .format("YYYY-MM-DDTHH:mm"),
       }
       
@@ -878,12 +878,12 @@ export default function (props) {
       title: "Available",
       roomName: roomName,
       StartTime: moment(startingTime)
-        // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
-        // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+        .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+        .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
         .format(),
       EndTime: moment(changedStartTime1)
-        // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
-        // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+        .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+        .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
         .format(),
       availability: true,
       booked: false,
@@ -949,12 +949,12 @@ export default function (props) {
         title: "Available",
         roomName: roomName,
         StartTime: moment(changedEndTime1)
-          // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
-          // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+          .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+          .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
           .format(),
         EndTime: moment(endingTime)
-          // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
-          // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+          .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+          .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
           .format(),
         availability: true,
         booked: false,
@@ -1032,12 +1032,12 @@ export default function (props) {
           availability: updatedAvailability,
           booked: updatedBooked,
           StartTime: moment(StartTime)
-            .add(5, "hours")         // for live need to comment
-            .add(30, "minutes")      // for live need to comment
+            // .add(5, "hours")         // for live need to comment
+            // .add(30, "minutes")      // for live need to comment
             .format("YYYY-MM-DDTHH:mm"),
           EndTime: moment(changedEndTime1)
-            .add(5, "hours")   // for live need to comment
-            .add(30, "minutes") // for live need to comment
+            // .add(5, "hours")   // for live need to comment
+            // .add(30, "minutes") // for live need to comment
             .format("YYYY-MM-DDTHH:mm"),
         }
         
@@ -1109,12 +1109,12 @@ export default function (props) {
             title: "Available",
             roomName: roomName,
             StartTime: moment(startingTime)
-              // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
-              // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+              .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+              .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
               .format(),
             EndTime: moment(changedStartTime1)
-              // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
-              // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+              .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+              .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
               .format(),
             availability: true,
             booked: false,
@@ -1188,12 +1188,12 @@ export default function (props) {
           availability: updatedAvailability,
           booked: updatedBooked,
           StartTime: moment(changedStartTime1)
-            .add(5, "hours")         // for live need to comment
-            .add(30, "minutes")      // for live need to comment
+            // .add(5, "hours")         // for live need to comment
+            // .add(30, "minutes")      // for live need to comment
             .format("YYYY-MM-DDTHH:mm"),
           EndTime: moment(EndTime)
-            .add(5, "hours")   // for live need to comment
-            .add(30, "minutes") // for live need to comment
+            // .add(5, "hours")   // for live need to comment
+            // .add(30, "minutes") // for live need to comment
             .format("YYYY-MM-DDTHH:mm"),
         }
       ).then(response => {
@@ -1255,12 +1255,12 @@ export default function (props) {
             title: "Available",
             roomName: roomName,
             StartTime: moment(changedEndTime1)
-              // .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
-              // .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
+              .subtract(5, "hours")  // live need to uncomment  .subtract(5, "hours")  
+              .subtract(30, "minutes") // live need to uncomment .subtract(30, "minutes") 
               .format(),
             EndTime: moment(endingTime)
-              // .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
-              // .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
+              .subtract(5, "hours")  // live need to uncomment .subtract(5, "hours") 
+              .subtract(30, "minutes") //live need to uncomment .subtract(30, "minutes")
               .format(),
             availability: true,
             booked: false,
