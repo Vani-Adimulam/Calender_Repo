@@ -38,14 +38,28 @@ export default function (props) {
   const [title, setTitle] = useState("");
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
-  const [StartTime, setStartTime] = useState(
-    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
-  );
-  console.log(StartTime, "StartTime", "Actual time");
+
+  const roundToNearest15Minutes = () => {
+    const time = moment().tz("Asia/Kolkata");
+    const remainder = 15 - (time.minute() % 15);
+    return moment(time).add(remainder, 'minutes').startOf('minute');
+  };
+
+  // State to hold the rounded current time
+  const [StartTime, setStartTime] = useState(roundToNearest15Minutes().format());
+
   const [EndTime, setEndTime] = useState(
-    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+    moment(roundToNearest15Minutes()).add(2, 'hours').format()
   );
-  console.log(EndTime, "End time");
+
+  // const [StartTime, setStartTime] = useState(
+  //   moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  // );
+  // console.log(StartTime, "StartTime", "Actual time");
+  // const [EndTime, setEndTime] = useState(
+  //   moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  // );
+  // console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
