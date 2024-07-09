@@ -162,11 +162,11 @@ app.put("/update/title/:id", async (req, res) => {
       .format("YYYY-MM-DD HH:mm:ss");
 
     // Check if StartTime is in the future
-    if (new Date(StartTime) < new Date(currentTimeIST)) {
-      return res
-        .status(400)
-        .json({ message: "Cannot book events for past time slots" });
-    }
+    // if (new Date(StartTime) < new Date(currentTimeIST)) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Cannot book events for past time slots" });
+    // }
 
     // Check if EndTime is less than StartTime
     if (new Date(EndTime) < new Date(StartTime)) {

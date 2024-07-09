@@ -38,14 +38,27 @@ export default function (props) {
   const [title, setTitle] = useState("");
   const [userMeetingInfo, setUserMeetingInfo] = useState({});
   const [roomName, setroomName] = useState("");
-  const [StartTime, setStartTime] = useState(
-    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
-  );
-  console.log(StartTime, "StartTime", "Actual time");
+  const roundToNearest15Minutes = () => {
+    const time = moment().tz("Asia/Kolkata");
+    const remainder = 15 - (time.minute() % 15);
+    return moment(time).add(remainder, 'minutes').startOf('minute');
+  };
+
+  // State to hold the rounded current time
+  const [StartTime, setStartTime] = useState(roundToNearest15Minutes().format());
+
   const [EndTime, setEndTime] = useState(
-    moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+    moment(roundToNearest15Minutes()).add(2, 'hours').format()
   );
-  console.log(EndTime, "End time");
+
+  // const [StartTime, setStartTime] = useState(
+  //   moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  // );
+  // console.log(StartTime, "StartTime", "Actual time");
+  // const [EndTime, setEndTime] = useState(
+  //   moment(new Date().toISOString()).tz("Asia/Kolkata").format()
+  // );
+  // console.log(EndTime, "End time");
   const [availability, setAvailability] = useState(true);
   const [booked, setBooked] = useState(true);
   const [loginusername, setLoginUsername] = useState("");
@@ -691,7 +704,7 @@ export default function (props) {
     // Condition for past time slot booking
     const currentTimeIST = moment().tz("Asia/Kolkata");
     console.log(currentTimeIST, "Current time ")
-    if (moment(StartTime).isBefore(currentTimeIST)) {
+    if (moment(StartTime).isBefore(currentTimeIST) && !eventCondition)  {
       toast.error("Cannot book events for past time slots");
       setTimeout(() => {
         toast.info(`Book your event with the current time: ${currentTimeIST.format("YYYY-MM-DD HH:mm:ss")}`);
@@ -699,6 +712,7 @@ export default function (props) {
       return;
     }
   
+
     let updatedAvailability = availability;
     let updatedBooked = booked;
     if (title === "Available") {
@@ -1524,6 +1538,10 @@ export default function (props) {
     return utcDateTime;
   };
 
+  const [eventCondition, setEventCondition] = useState( true )
+  console.log(eventCondition, "Event time condition")
+ 
+
   const superUserCondition = JSON.parse(localStorage.getItem("isSuperUser")) || false;
   // console.log(superUserCondition, "Super user condition");
   const [repeatMode, setRepeatMode] = useState(1)
@@ -1730,9 +1748,9 @@ export default function (props) {
                       Select Meeting Room
                     </option>
                     <option value="𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">
-                      12 Seat
+                    𝐓𝐰𝐞𝐥𝐯𝐞 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦
                     </option>
-                    <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">6 Seat</option>
+                    <option value="𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦">𝐒𝐢𝐱 𝐒𝐞𝐚𝐭𝐞𝐫 𝐂𝐨𝐧𝐟𝐞𝐫𝐞𝐧𝐜𝐞 𝐑𝐨𝐨𝐦</option>
                   </select>
 
                   {/* code changes start  */}
@@ -2006,18 +2024,25 @@ export default function (props) {
                 //   return; // Exit the function, preventing the modal from opening
                 // }
                 const date5 = moment(new Date()).format();
-                // console.log(date5);
+                console.log(date5, "date5");
                 const date6 = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
                   .format("YYYY-MM-DDTHH:mm");
-                // console.log(date6);
-                // console.log(date1 > date2, "Checking", item.title);
-                if (date5 > date6) {
-                  superUserCondition &&
-                    alert("Editing past events is not allowed.");
-                  return;
-                }
+                console.log(date6, "date6");
+                const condition = date5 > date6
+                console.log(date5 > date6, "Checking");
+                // if (date5 > date6) {
+                // console.log(date5 < date6, "Condition satisfied")
+                  // superUserCondition &&
+                  //   alert("Editing past events is not allowed.");
+                  // return;
+                // }
+                setEventCondition(condition)
+                
+                  
+                  // console.log(dateCondition, "Condidtion to check datetime")
+                
                 const startTime2 = moment(info.event.start)
                   .subtract(5, "hours")
                   .subtract(30, "minutes")
@@ -2439,7 +2464,7 @@ export default function (props) {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     defaultValue={title}
-                    disabled={availability === true}
+                    disabled={availability === true }
                     style={{
                       width: "100%",
                       padding: "8px",
@@ -2466,6 +2491,7 @@ export default function (props) {
                       borderRadius: "3px",
                       marginBottom: "15px",
                     }}
+                    disabled = {eventCondition}
                   >
                     <option value="" disabled selected>
                       Select Room
@@ -2525,6 +2551,7 @@ export default function (props) {
                           moment(e.target.value).format("YYYY-MM-DDTHH:mm")
                         )
                       }
+                      disabled = {eventCondition}
                       required
                     />
                     {/* <Datetime
@@ -2557,6 +2584,7 @@ export default function (props) {
                           moment(e.target.value).format("YYYY-MM-DDTHH:mm")
                         )
                       }
+                      disabled = {eventCondition}
                       required
                     />
                     {/* <Datetime
